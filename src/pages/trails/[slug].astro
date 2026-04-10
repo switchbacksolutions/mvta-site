@@ -1,0 +1,224 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const trails = await getCollection('trails');
+  return trails.map((trail) => ({
+    params: { slug: trail.id },
+    props: { trail },
+  }));
+}
+
+const { trail } = Astro.props;
+const { Content } = await render(trail);
+const { title, description, heroImage, trailType, distance, difficulty, uses, access, directionsUrl, mapUrl, amenities, galleryImages, notes } = trail.data;
+
+const difficultyColor: Record<string, string> = {
+  Easy: 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300',
+  Moderate: 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300',
+  Challenging: 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300',
+};
+
+const useIcons: Record<string, string> = {
+  'Hiking': '🥾',
+  'Mountain Biking': '🚵',
+  'Horseback Riding': '🐴',
+  'Dogs on Leash': '🐕',
+  'Family Friendly': '👨‍👩‍👧',
+  'Wheelchair Accessible (paved loop)': '♿',
+};
+---
+
+<BaseLayout title={title} description={description}>
+  <main>
+    <!-- Hero image -->
+    {heroImage && (
+      <div class="relative h-72 w-full overflow-hidden sm:h-96 lg:h-[28rem]">
+        <img
+          src={heroImage}
+          alt={title}
+          class="h-full w-full object-cover"
+          loading="eager"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+        <div class="absolute bottom-0 left-0 right-0 px-6 pb-8 sm:px-8">
+          <div class="mx-auto max-w-4xl">
+            <a
+              href="/trails"
+              class="mb-3 inline-flex items-center gap-1.5 text-sm font-medium text-white/80 no-underline hover:text-white transition-colors"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+              </svg>
+              All Trails
+            </a>
+            <h1 class="text-3xl font-bold text-white sm:text-4xl">{title}</h1>
+          </div>
+        </div>
+      </div>
+    )}
+
+    <div class="mx-auto max-w-4xl px-4 py-10 sm:px-6">
+      <!-- Back link (no hero fallback) -->
+      {!heroImage && (
+        <a
+          href="/trails"
+          class="mb-6 inline-flex items-center gap-1.5 text-sm font-medium no-underline text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+          </svg>
+          All Trails
+        </a>
+      )}
+      {!heroImage && <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-6">{title}</h1>}
+
+      <div class="grid gap-8 lg:grid-cols-3 lg:items-start">
+        <!-- Left: description + gallery -->
+        <div class="lg:col-span-2 space-y-8">
+          <!-- Stat pills -->
+          <div class="flex flex-wrap gap-2">
+            <span class:list={['tag-pill font-semibold', difficultyColor[difficulty]]}>
+              {difficulty}
+            </span>
+            <span class="tag-pill">{trailType}</span>
+            {distance && <span class="tag-pill">{distance}</span>}
+          </div>
+
+          <!-- Prose description -->
+          <div class="prose-content">
+            <Content />
+          </div>
+
+          <!-- Photo gallery -->
+          {galleryImages.length > 0 && (
+            <section aria-labelledby="gallery-heading">
+              <h2 id="gallery-heading" class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Photos</h2>
+              <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                {galleryImages.map((src, i) => (
+                  <img
+                    src={src}
+                    alt={`${title} — photo ${i + 1}`}
+                    class="aspect-square w-full rounded-lg object-cover"
+                    loading="lazy"
+                  />
+                ))}
+              </div>
+            </section>
+          )}
+        </div>
+
+        <!-- Right: sidebar info card -->
+        <aside class="space-y-5">
+          <!-- Trail details -->
+          <div class="card">
+            <h2 class="text-base font-semibold text-gray-900 dark:text-white mb-4">Trail Details</h2>
+            <dl class="space-y-3 text-sm">
+              <div>
+                <dt class="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">Type</dt>
+                <dd class="mt-0.5 text-gray-900 dark:text-white font-medium">{trailType}</dd>
+              </div>
+              {distance && (
+                <div>
+                  <dt class="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">Distance</dt>
+                  <dd class="mt-0.5 text-gray-900 dark:text-white font-medium">{distance}</dd>
+                </div>
+              )}
+              <div>
+                <dt class="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">Difficulty</dt>
+                <dd class="mt-0.5">
+                  <span class:list={['inline-block rounded-full px-2 py-0.5 text-xs font-semibold', difficultyColor[difficulty]]}>
+                    {difficulty}
+                  </span>
+                </dd>
+              </div>
+              {uses.length > 0 && (
+                <div>
+                  <dt class="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1.5">Permitted Uses</dt>
+                  <dd>
+                    <ul class="list-none m-0 p-0 space-y-1">
+                      {uses.map((use) => (
+                        <li class="flex items-center gap-2 text-gray-700 dark:text-gray-300">
+                          <span aria-hidden="true">{useIcons[use] ?? '✓'}</span>
+                          {use}
+                        </li>
+                      ))}
+                    </ul>
+                  </dd>
+                </div>
+              )}
+            </dl>
+          </div>
+
+          <!-- Access & directions -->
+          {(access || directionsUrl || mapUrl) && (
+            <div class="card">
+              <h2 class="text-base font-semibold text-gray-900 dark:text-white mb-3">Getting There</h2>
+              {access && <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">{access}</p>}
+              <div class="flex flex-col gap-2">
+                {directionsUrl && (
+                  <a
+                    href={directionsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn-primary justify-center text-center no-underline"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                    </svg>
+                    Get Directions
+                  </a>
+                )}
+                {mapUrl && (
+                  <a
+                    href={mapUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn-secondary justify-center text-center no-underline"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.159.69.159 1.006 0Z" />
+                    </svg>
+                    View Trail Map
+                  </a>
+                )}
+              </div>
+            </div>
+          )}
+
+          <!-- Amenities -->
+          {amenities.length > 0 && (
+            <div class="card">
+              <h2 class="text-base font-semibold text-gray-900 dark:text-white mb-3">Amenities</h2>
+              <ul class="list-none m-0 p-0 space-y-1.5 text-sm text-gray-600 dark:text-gray-400">
+                {amenities.map((item) => (
+                  <li class="flex items-start gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="mt-0.5 h-4 w-4 shrink-0 text-brand-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                    </svg>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          <!-- Notes / tips -->
+          {notes && (
+            <div class="rounded-xl border border-amber-200 bg-amber-50 p-5 dark:border-amber-700/50 dark:bg-amber-900/20">
+              <h2 class="flex items-center gap-2 text-base font-semibold text-amber-900 dark:text-amber-200 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+                </svg>
+                Tips & Notes
+              </h2>
+              <p class="text-sm text-amber-800 dark:text-amber-300">{notes}</p>
+            </div>
+          )}
+        </aside>
+      </div>
+    </div>
+  </main>
+</BaseLayout>

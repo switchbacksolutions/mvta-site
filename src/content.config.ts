@@ -28,4 +28,23 @@ const blog = defineCollection({
   }),
 });
 
-export const collections = { blog };
+const trails = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/trails' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    heroImage: z.string().optional(),
+    trailType: z.enum(['Loop', 'Out and Back', 'Point to Point']),
+    distance: z.string().optional(),
+    difficulty: z.enum(['Easy', 'Moderate', 'Challenging']),
+    uses: z.array(z.string()).default([]),
+    access: z.string().optional(),
+    directionsUrl: z.string().optional(),
+    mapUrl: z.string().optional(),
+    amenities: z.array(z.string()).default([]),
+    galleryImages: z.array(z.string()).default([]),
+    notes: z.string().optional(),
+  }),
+});
+
+export const collections = { blog, trails };
