@@ -9,6 +9,8 @@ const difficultyColor: Record<string, string> = {
   Moderate: 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300',
   Challenging: 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300',
 };
+
+const allUses = [...new Set(trails.flatMap((t) => t.data.uses))].sort();
 ---
 
 <BaseLayout
@@ -22,9 +24,37 @@ const difficultyColor: Record<string, string> = {
       near Meadow Vista, maintained and championed by MVTA volunteers.
     </p>
 
-    <ul class="mt-12 grid gap-6 list-none m-0 p-0 sm:grid-cols-2">
+    <!-- Search and tag filter controls -->
+    <div class="mt-8 space-y-3">
+      <input
+        id="trail-search"
+        type="search"
+        placeholder="Search trails by name…"
+        class="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-500"
+      />
+      <div class="flex flex-wrap gap-2" id="tag-filters" aria-label="Filter by use">
+        {allUses.map((use) => (
+          <button
+            type="button"
+            data-tag={use.toLowerCase()}
+            class="tag-filter-btn tag-pill cursor-pointer border border-transparent transition-colors hover:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/50"
+          >
+            {use}
+          </button>
+        ))}
+      </div>
+    </div>
+
+    <p id="no-results" class="mt-10 hidden text-center text-gray-500 dark:text-gray-400">
+      No trails match your search or filters.
+    </p>
+
+    <ul id="trails-list" class="mt-8 grid gap-6 list-none m-0 p-0 sm:grid-cols-2">
       {trails.map((trail) => (
-        <li>
+        <li
+          data-title={trail.data.title.toLowerCase()}
+          data-uses={trail.data.uses.map((u) => u.toLowerCase()).join('|')}
+        >
           <a
             href={`/trails/${trail.id}`}
             class="group flex flex-col h-full rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden hover:shadow-md transition-shadow no-underline dark:border-gray-700 dark:bg-gray-800"
@@ -71,3 +101,65 @@ const difficultyColor: Record<string, string> = {
     </div>
   </main>
 </BaseLayout>
+
+<script>
+  const searchInput = document.getElementById('trail-search') as HTMLInputElement;
+  const tagButtons = document.querySelectorAll<HTMLButtonElement>('.tag-filter-btn');
+  const trailItems = document.querySelectorAll<HTMLLIElement>('#trails-list li');
+  const noResults = document.getElementById('no-results')!;
+
+  const activeTags = new Set<string>();
+
+  function applyFilters() {
+    const query = searchInput.value.toLowerCase().trim();
+    let visibleCount = 0;
+
+    trailItems.forEach((item) => {
+      const title = item.dataset.title ?? '';
+      const uses = item.dataset.uses ?? '';
+
+      const matchesSearch = !query || title.includes(query);
+      const matchesTags =
+        activeTags.size === 0 ||
+        [...activeTags].every((tag) => uses.split('|').some((u) => u === tag));
+
+      const visible = matchesSearch && matchesTags;
+      item.style.display = visible ? '' : 'none';
+      if (visible) visibleCount++;
+    });
+
+    noResults.classList.toggle('hidden', visibleCount > 0);
+  }
+
+  searchInput.addEventListener('input', applyFilters);
+
+  tagButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const tag = btn.dataset.tag!;
+      if (activeTags.has(tag)) {
+        activeTags.delete(tag);
+        btn.setAttribute('aria-pressed', 'false');
+        btn.classList.remove(
+          'bg-brand-600',
+          'text-white',
+          'dark:bg-brand-500',
+          'border-brand-600',
+          'dark:border-brand-500',
+        );
+        btn.classList.add('border-transparent');
+      } else {
+        activeTags.add(tag);
+        btn.setAttribute('aria-pressed', 'true');
+        btn.classList.remove('border-transparent');
+        btn.classList.add(
+          'bg-brand-600',
+          'text-white',
+          'dark:bg-brand-500',
+          'border-brand-600',
+          'dark:border-brand-500',
+        );
+      }
+      applyFilters();
+    });
+  });
+</script>
