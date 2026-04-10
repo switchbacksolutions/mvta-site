@@ -20,7 +20,7 @@ interface Props {
   canonicalURL?: URL | string;
 }
 
-const SITE_NAME = 'Astro Template';
+const SITE_NAME = 'Meadow Vista Trails Association';
 
 const {
   title,
@@ -69,6 +69,11 @@ const canonical = new URL(canonicalURL, Astro.site ?? Astro.url).href;
 <meta name="twitter:title" content={pageTitle} />
 <meta name="twitter:description" content={description} />
 <meta name="twitter:image" content={new URL(image, Astro.site ?? Astro.url).href} />
+
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Karla:wght@300;400;500;600&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
 <!-- Global stylesheet -->
 <link rel="stylesheet" href="/src/styles/global.css" />

@@ -1,90 +1,80 @@
 ---
-/**
- * src/pages/about.astro — About page
- */
-
 import BaseLayout from '@/layouts/BaseLayout.astro';
 ---
 
 <BaseLayout
-  title="About"
-  description="Learn more about this Astro template — what's included and how to use it."
+  title="About Us"
+  description="Learn about Meadow Vista Trails Association — dedicated to establishing and maintaining safe trails in Meadow Vista and the surrounding foothill areas since 1995."
 >
   <main class="mx-auto max-w-3xl px-4 py-16 sm:px-6">
-    <h1 class="text-4xl font-bold text-gray-900 dark:text-white">About</h1>
+    <h1 class="text-4xl font-bold text-gray-900 dark:text-white">About MVTA</h1>
 
     <div class="prose-content mt-8">
       <p>
-        This is a production-ready Astro template designed to give you a
-        solid foundation for content-driven websites, personal blogs, and
-        documentation sites.
+        Meadow Vista Trails Association (MVTA) is dedicated to establishing and maintaining
+        safe trails in Meadow Vista and the surrounding areas. Founded in 1995, we serve
+        individuals interested in walking, dog walking, jogging, running, bike riding, and
+        horseback riding throughout the foothill communities of Placer County.
       </p>
 
-      <h2>Technology Stack</h2>
+      <h2>Our Mission</h2>
+      <p>
+        Creating trails and community in Meadow Vista since 1995. We believe that access
+        to safe, well-maintained trails enriches the lives of residents and visitors alike,
+        connecting people with the natural beauty of the Sierra Nevada foothills.
+      </p>
+
+      <h2>What We Do</h2>
       <ul>
         <li>
-          <strong>Astro</strong> — Static site generator with island
-          architecture and zero-JS by default.
+          <strong>Trail maintenance</strong> — volunteer work parties keep existing trails
+          safe and accessible for hikers, cyclists, and equestrians.
         </li>
         <li>
-          <strong>TypeScript</strong> — Full type safety across all components,
-          pages, and content collections.
+          <strong>Trail development</strong> — we advocate for and help develop new trail
+          connections in the Meadow Vista area.
         </li>
         <li>
-          <strong>Tailwind CSS</strong> — Utility-first CSS with dark mode
-          support via the <code>class</code> strategy.
+          <strong>Facilities management</strong> — we manage the Meadow Vista Horse Arena
+          and adjacent Dog Park on Combie Road, on land owned by Placer County.
         </li>
         <li>
-          <strong>MDX</strong> — Write blog posts in Markdown with the option
-          to embed interactive JSX components.
+          <strong>Community events</strong> — group hikes, board meetings, and participation
+          in local events like Pioneer Day.
         </li>
         <li>
-          <strong>Content Collections</strong> — Type-safe content with Zod
-          schema validation.
-        </li>
-        <li>
-          <strong>Sitemap</strong> — Auto-generated <code>sitemap.xml</code>{' '}
-          for SEO.
-        </li>
-        <li>
-          <strong>RSS</strong> — Auto-generated RSS feed at{' '}
-          <code>/rss.xml</code>.
+          <strong>Education</strong> — our newsletter and blog keep members informed about
+          local trails, environmental stewardship, and conservation.
         </li>
       </ul>
 
-      <h2>Deployment</h2>
+      <h2>Membership</h2>
       <p>
-        The template is pre-configured for deployment on{' '}
-        <a href="https://netlify.com" target="_blank" rel="noopener noreferrer">
-          Netlify
-        </a>
-        . Connect your Git repository and Netlify will automatically build and
-        deploy on every push to <code>main</code>.
+        MVTA is a member-supported nonprofit. Your membership directly funds trail
+        maintenance, facility upkeep, and community programs. Membership levels:
       </p>
+      <ul>
+        <li><strong>Individual</strong> — $25/year</li>
+        <li><strong>Family</strong> — $35/year</li>
+        <li><strong>Trail Guardian</strong> — $100/year</li>
+        <li><strong>Lifetime Sponsor</strong> — $1,000</li>
+      </ul>
       <p>
-        Security headers (X-Frame-Options, X-Content-Type-Options, CSP, etc.)
-        are configured in <code>netlify.toml</code>.
-      </p>
-
-      <h2>CMS Integration</h2>
-      <p>
-        The template includes a <code>cloudcannon.config.yml</code> for
-        <a href="https://cloudcannon.com" target="_blank" rel="noopener noreferrer">
-          CloudCannon
-        </a>
-        CMS, giving editors a visual interface to manage blog posts and pages
-        without touching the code.
+        <a href="/contact">Join MVTA today</a> to support trails in your community.
       </p>
 
-      <h2>Getting Started</h2>
-      <ol>
-        <li>Clone or fork the repository.</li>
-        <li>Run <code>npm install</code>.</li>
-        <li>Run <code>npm run dev</code> and open <code>http://localhost:4321</code>.</li>
-        <li>Edit <code>astro.config.mjs</code> and set your <code>site</code> URL.</li>
-        <li>Add blog posts to <code>src/content/blog/</code>.</li>
-        <li>Deploy to Netlify by connecting your Git repo.</li>
-      </ol>
+      <h2>Governance</h2>
+      <p>
+        MVTA is governed by a volunteer board of nine members elected by the membership.
+        Elections are held in November or December of odd-numbered years, and board members
+        serve two-year terms. Learn more about our current <a href="/board">board of directors</a>.
+      </p>
+
+      <h2>Contact</h2>
+      <p>
+        Mailing address: P.O. Box 871, Meadow Vista, CA 95722<br />
+        Email: <a href="mailto:admin@mvtrails.org">admin@mvtrails.org</a>
+      </p>
     </div>
   </main>
 </BaseLayout>

@@ -7,10 +7,12 @@
  */
 
 const NAV_LINKS = [
-  { href: '/', label: 'Home' },
-  { href: '/blog', label: 'Blog' },
+  { href: '/trails', label: 'Trails' },
+  { href: '/horse-arena', label: 'Horse Arena' },
+  { href: '/dog-park', label: 'Dog Park' },
+  { href: '/events', label: 'Events' },
   { href: '/about', label: 'About' },
-  { href: '/contact', label: 'Contact' },
+  { href: '/contact', label: 'Join / Contact' },
 ];
 
 const pathname = new URL(Astro.request.url).pathname;
@@ -26,9 +28,9 @@ function isActive(href: string): boolean {
     <!-- Logo / site name -->
     <a
       href="/"
-      class="text-xl font-bold text-gray-900 no-underline hover:text-brand-600 dark:text-white dark:hover:text-brand-400 transition-colors"
+      class="text-xl font-bold text-brand-800 no-underline hover:text-brand-600 dark:text-brand-200 dark:hover:text-brand-400 transition-colors"
     >
-      Astro Template
+      MVTA
     </a>
 
     <!-- Desktop navigation -->

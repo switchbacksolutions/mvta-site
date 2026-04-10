@@ -1,10 +1,4 @@
 ---
-/**
- * src/pages/index.astro — Home page
- *
- * Shows a hero section and the three most recent published blog posts.
- */
-
 import { getCollection } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import FormattedDate from '@/components/FormattedDate.astro';
@@ -13,114 +7,183 @@ const allPosts = await getCollection('blog', ({ data }) => !data.draft);
 const recentPosts = allPosts
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
   .slice(0, 3);
+
+const trails = [
+  {
+    name: 'Olmstead Loop Trail',
+    aka: 'Knickerbocker Trail',
+    type: 'Loop',
+    distance: '10 miles',
+    difficulty: 'Moderate',
+    highlight: 'Spectacular views of Sierra Range and canyon views',
+  },
+  {
+    name: 'Euchre Bar – Alta',
+    aka: null,
+    type: 'Out and Back',
+    distance: '5 miles',
+    difficulty: 'Moderate',
+    highlight: 'Old mining trail to the American River and Humbug Creek',
+  },
+  {
+    name: 'Drivers Flat to Ruck-a-Chucky',
+    aka: null,
+    type: 'Out and Back',
+    distance: '2.5 miles',
+    difficulty: 'Moderate',
+    highlight: 'Dirt road descends to the American River; trailer parking available',
+  },
+];
 ---
 
 <BaseLayout
-  title="Astro Template"
-  description="A production-ready Astro blog template with Tailwind CSS, MDX, and CloudCannon CMS support."
+  title="Meadow Vista Trails Association"
+  description="Good trails. Great friends. Join a community of hikers, bikers, and riders dedicated to loving foothill trails in Meadow Vista, CA."
 >
   <main>
-  <!-- Hero -->
-  <section class="bg-gradient-to-br from-brand-50 to-white dark:from-gray-900 dark:to-gray-950">
-    <div class="mx-auto max-w-4xl px-4 py-24 sm:px-6 text-center">
-      <h1 class="text-5xl font-bold tracking-tight text-gray-900 dark:text-white text-balance">
-        Welcome to<br />
-        <span class="text-brand-600 dark:text-brand-400">Astro Template</span>
-      </h1>
-      <p class="mx-auto mt-6 max-w-2xl text-xl text-gray-600 dark:text-gray-400 text-pretty">
-        A production-ready starter with Astro, Tailwind CSS, MDX, content
-        collections, CloudCannon CMS integration, and Netlify deployment.
-      </p>
-      <div class="mt-10 flex flex-wrap justify-center gap-4">
-        <a href="/blog" class="btn-primary">
-          Read the blog
-        </a>
-        <a href="/about" class="btn-secondary">
-          About this template
-        </a>
+    <!-- Hero -->
+    <section class="bg-brand-800 dark:bg-brand-900">
+      <div class="mx-auto max-w-5xl px-4 py-24 sm:px-6 text-center">
+        <h1 class="text-5xl font-bold tracking-tight text-white text-balance">
+          Good trails.<br />
+          <span class="text-brand-200">Great friends.</span>
+        </h1>
+        <p class="mx-auto mt-6 max-w-2xl text-xl text-brand-100 text-pretty">
+          Join a community of like-minded hikers, bikers, and riders dedicated to
+          loving foothill trails in Meadow Vista and the surrounding foothills.
+        </p>
+        <div class="mt-10 flex flex-wrap justify-center gap-4">
+          <a href="/contact" class="btn-primary">
+            Join MVTA
+          </a>
+          <a href="/trails" class="btn-secondary">
+            See Trails
+          </a>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- Recent posts -->
-  {recentPosts.length > 0 && (
-    <section class="mx-auto max-w-4xl px-4 py-16 sm:px-6">
+    <!-- Mission strip -->
+    <section class="bg-brand-50 dark:bg-brand-900/40">
+      <div class="mx-auto max-w-5xl px-4 py-10 sm:px-6 text-center">
+        <p class="text-lg text-brand-700 dark:text-brand-200 font-medium">
+          Meadow Vista Trails Association is dedicated to establishing and maintaining safe trails
+          in Meadow Vista and the surrounding areas — serving walkers, joggers, cyclists, and equestrians since 1995.
+        </p>
+      </div>
+    </section>
+
+    <!-- Featured trails -->
+    <section class="mx-auto max-w-5xl px-4 py-16 sm:px-6">
       <div class="flex items-baseline justify-between mb-8">
-        <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">
-          Recent Posts
-        </h2>
-        <a
-          href="/blog"
-          class="text-sm font-medium text-brand-600 no-underline hover:underline dark:text-brand-400"
-        >
-          View all →
+        <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Featured Trails</h2>
+        <a href="/trails" class="text-sm font-medium text-brand-600 no-underline hover:underline dark:text-brand-400">
+          View all trails →
         </a>
       </div>
-
       <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 list-none m-0 p-0">
-        {recentPosts.map((post) => (
-          <li>
-            <a href={`/blog/${post.id}`} class="group block card h-full no-underline">
-              {post.data.heroImage && (
-                <img
-                  src={post.data.heroImage}
-                  alt={post.data.title}
-                  class="mb-4 h-40 w-full rounded-lg object-cover"
-                  loading="lazy"
-                  width={600}
-                  height={315}
-                />
-              )}
-
-              {post.data.tags.length > 0 && (
-                <div class="mb-2 flex flex-wrap gap-1">
-                  {post.data.tags.slice(0, 2).map((tag) => (
-                    <span class="tag-pill">{tag}</span>
-                  ))}
-                </div>
-              )}
-
-              <h3 class="text-lg font-semibold text-gray-900 group-hover:text-brand-600 dark:text-white dark:group-hover:text-brand-400 transition-colors text-balance">
-                {post.data.title}
-              </h3>
-
-              <p class="mt-2 text-sm text-gray-600 dark:text-gray-400 line-clamp-3">
-                {post.data.description}
-              </p>
-
-              <p class="mt-4 text-xs">
-                <FormattedDate date={post.data.pubDate} format="short" />
-              </p>
-            </a>
+        {trails.map((trail) => (
+          <li class="card">
+            <span class="inline-block rounded-full bg-brand-100 px-3 py-0.5 text-xs font-medium text-brand-700 dark:bg-brand-900 dark:text-brand-200 mb-3">
+              {trail.type} · {trail.distance}
+            </span>
+            <h3 class="font-semibold text-gray-900 dark:text-white text-balance">
+              {trail.name}
+              {trail.aka && <span class="block text-sm text-gray-500 font-normal mt-0.5">aka {trail.aka}</span>}
+            </h3>
+            <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">{trail.highlight}</p>
+            <p class="mt-3 text-xs text-brand-600 dark:text-brand-400 font-medium">{trail.difficulty}</p>
           </li>
         ))}
       </ul>
     </section>
-  )}
 
-  <!-- Feature highlights -->
-  <section class="bg-gray-50 dark:bg-gray-900">
-    <div class="mx-auto max-w-4xl px-4 py-16 sm:px-6">
-      <h2 class="mb-10 text-center text-2xl font-semibold text-gray-900 dark:text-white">
-        What's included
-      </h2>
-      <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 list-none m-0 p-0">
-        {[
-          { emoji: '⚡', title: 'Astro + TypeScript', desc: 'Zero-JS by default with full type safety.' },
-          { emoji: '🎨', title: 'Tailwind CSS', desc: 'Utility-first styling with dark mode support.' },
-          { emoji: '📝', title: 'MDX Blog', desc: 'Write posts in Markdown with JSX components.' },
-          { emoji: '🗺️', title: 'Sitemap & RSS', desc: 'Auto-generated sitemap.xml and RSS feed.' },
-          { emoji: '🔒', title: 'Security Headers', desc: 'Production-ready headers via Netlify.' },
-          { emoji: '🧪', title: 'Testing', desc: 'Vitest unit tests + Playwright E2E tests.' },
-        ].map(({ emoji, title, desc }) => (
-          <li class="card">
-            <p class="text-3xl mb-3" aria-hidden="true">{emoji}</p>
-            <h3 class="font-semibold text-gray-900 dark:text-white">{title}</h3>
-            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">{desc}</p>
-          </li>
-        ))}
-      </ul>
-    </div>
-  </section>
+    <!-- Facilities -->
+    <section class="bg-gray-50 dark:bg-gray-900">
+      <div class="mx-auto max-w-5xl px-4 py-16 sm:px-6">
+        <h2 class="mb-10 text-center text-3xl font-bold text-gray-900 dark:text-white">Facilities</h2>
+        <div class="grid gap-6 sm:grid-cols-2">
+          <a href="/horse-arena" class="card group no-underline block">
+            <h3 class="font-semibold text-gray-900 dark:text-white group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">
+              Meadow Vista Horse Arena
+            </h3>
+            <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+              A full-sized equestrian arena and staging area available to the public, located on Combie Road. Gate keys available through MVTA.
+            </p>
+            <span class="mt-4 inline-block text-sm text-brand-600 dark:text-brand-400 font-medium">Learn more →</span>
+          </a>
+          <a href="/dog-park" class="card group no-underline block">
+            <h3 class="font-semibold text-gray-900 dark:text-white group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">
+              Meadow Vista Dog Park
+            </h3>
+            <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+              A dog park and agility course located behind the Horse Arena, open to the public.
+            </p>
+            <span class="mt-4 inline-block text-sm text-brand-600 dark:text-brand-400 font-medium">Learn more →</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Recent news -->
+    {recentPosts.length > 0 && (
+      <section class="mx-auto max-w-5xl px-4 py-16 sm:px-6">
+        <div class="flex items-baseline justify-between mb-8">
+          <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Latest News</h2>
+          <a href="/blog" class="text-sm font-medium text-brand-600 no-underline hover:underline dark:text-brand-400">
+            View all →
+          </a>
+        </div>
+        <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 list-none m-0 p-0">
+          {recentPosts.map((post) => (
+            <li>
+              <a href={`/blog/${post.id}`} class="group block card h-full no-underline">
+                {post.data.tags.length > 0 && (
+                  <div class="mb-2 flex flex-wrap gap-1">
+                    {post.data.tags.slice(0, 2).map((tag) => (
+                      <span class="tag-pill">{tag}</span>
+                    ))}
+                  </div>
+                )}
+                <h3 class="text-lg font-semibold text-gray-900 group-hover:text-brand-600 dark:text-white dark:group-hover:text-brand-400 transition-colors text-balance">
+                  {post.data.title}
+                </h3>
+                <p class="mt-2 text-sm text-gray-600 dark:text-gray-400 line-clamp-3">
+                  {post.data.description}
+                </p>
+                <p class="mt-4 text-xs text-gray-400 dark:text-gray-500">
+                  <FormattedDate date={post.data.pubDate} format="short" />
+                </p>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    <!-- Join CTA -->
+    <section class="bg-accent-500">
+      <div class="mx-auto max-w-5xl px-4 py-16 sm:px-6 text-center">
+        <h2 class="text-3xl font-bold text-white">Become a Member</h2>
+        <p class="mt-4 text-lg text-white/90 max-w-xl mx-auto">
+          Support trail maintenance, connect with your community, and help keep Meadow Vista's trails open for everyone.
+          Individual memberships start at just $25/year.
+        </p>
+        <div class="mt-8 flex flex-wrap justify-center gap-4">
+          <a
+            href="/contact"
+            class="inline-flex items-center gap-2 rounded-md bg-white px-6 py-3 text-sm font-semibold text-accent-600 shadow-sm hover:bg-gray-50 transition-colors"
+          >
+            Join Today
+          </a>
+          <a
+            href="/about"
+            class="inline-flex items-center gap-2 rounded-md border-2 border-white px-6 py-3 text-sm font-semibold text-white hover:bg-white/10 transition-colors"
+          >
+            Learn More
+          </a>
+        </div>
+      </div>
+    </section>
   </main>
 </BaseLayout>

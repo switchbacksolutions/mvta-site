@@ -1,0 +1,81 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+
+const boardMembers = [
+  {
+    name: 'Lana Maeder',
+    role: 'President',
+    bio: 'A horse trainer and owner of Lana\'s Horses, a business dedicated to connecting individuals with their ideal equine companions.',
+  },
+  {
+    name: 'Jeff Sparman',
+    role: 'Vice President',
+    bio: 'An active community member involved in local initiatives in Meadow Vista, California.',
+  },
+  {
+    name: 'Scott Craig',
+    role: 'Secretary',
+    bio: 'An active community participant based in Meadow Vista, California.',
+  },
+  {
+    name: 'Richard Goodwin',
+    role: 'Treasurer',
+    bio: 'An avid trail user who regularly contributes articles to the MVTA Newsletter about local trails and usage concerns.',
+  },
+  {
+    name: 'Sherri Bloomfield',
+    role: 'Membership Coordinator',
+    bio: 'An engaged community resident involved in local initiatives.',
+  },
+  {
+    name: 'Chris Sihner',
+    role: 'Trail Boss',
+    bio: 'An active participant in Meadow Vista community efforts and trail maintenance.',
+  },
+  {
+    name: 'Michelle Hamil',
+    role: 'Board Member',
+    bio: 'An involved community resident supporting MVTA\'s mission.',
+  },
+  {
+    name: 'Tiffany Van der Linden',
+    role: 'President Emeritus',
+    bio: 'Active in local community initiatives and a longtime MVTA leader.',
+  },
+];
+---
+
+<BaseLayout
+  title="Board of Directors"
+  description="Meet the volunteer board of directors who guide the Meadow Vista Trails Association. Board members serve two-year terms, elected by MVTA members."
+>
+  <main class="mx-auto max-w-5xl px-4 py-16 sm:px-6">
+    <h1 class="text-4xl font-bold text-gray-900 dark:text-white">Board of Directors</h1>
+    <p class="mt-4 text-xl text-gray-600 dark:text-gray-400">
+      MVTA is governed by a volunteer board of nine members elected by the membership.
+      Elections are held in November or December of odd-numbered years, and members
+      serve two-year terms.
+    </p>
+
+    <ul class="mt-12 grid gap-6 sm:grid-cols-2 list-none m-0 p-0">
+      {boardMembers.map((member) => (
+        <li class="card">
+          <p class="text-xs font-semibold uppercase tracking-wider text-brand-600 dark:text-brand-400 mb-1">
+            {member.role}
+          </p>
+          <h2 class="text-xl font-semibold text-gray-900 dark:text-white">{member.name}</h2>
+          <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">{member.bio}</p>
+        </li>
+      ))}
+    </ul>
+
+    <div class="mt-12 prose-content">
+      <h2>Board Elections</h2>
+      <p>
+        Board members serve two-year terms. All nine seats are elected in November or December
+        of odd-numbered years. MVTA members in good standing are eligible to vote and run for
+        office. For more information, <a href="/contact">contact us</a>.
+      </p>
+    </div>
+  </main>
+</BaseLayout>

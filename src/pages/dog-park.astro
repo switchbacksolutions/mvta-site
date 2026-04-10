@@ -1,0 +1,44 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Meadow Vista Dog Park"
+  description="A dog park and agility course located behind the Meadow Vista Horse Arena on Combie Road, open to the public and managed by MVTA."
+>
+  <main class="mx-auto max-w-3xl px-4 py-16 sm:px-6">
+    <h1 class="text-4xl font-bold text-gray-900 dark:text-white">Meadow Vista Dog Park</h1>
+    <p class="mt-4 text-xl text-gray-600 dark:text-gray-400">
+      A dog park and agility course located behind the Horse Arena, open to the public.
+    </p>
+
+    <div class="prose-content mt-10">
+      <h2>About the Dog Park</h2>
+      <p>
+        The Meadow Vista Dog Park is an off-leash facility featuring an agility course with
+        coursing obstacles. It is located directly behind the{' '}
+        <a href="/horse-arena">Meadow Vista Horse Arena</a> on Combie Road and is open
+        to the public at no charge.
+      </p>
+
+      <h2>Access</h2>
+      <p>
+        The dog park is accessible through the Horse Arena entrance on Combie Road.
+        No MVTA membership is required to use the facility. For directions or access
+        information, contact us at{' '}
+        <a href="mailto:admin@mvtrails.org">admin@mvtrails.org</a>.
+      </p>
+
+      <h2>Get Involved</h2>
+      <p>
+        MVTA volunteers help maintain the dog park. If you'd like to pitch in or have
+        suggestions for improvements, <a href="/contact">reach out to us</a>.
+      </p>
+    </div>
+
+    <div class="mt-10 flex flex-wrap gap-4">
+      <a href="/contact" class="btn-primary">Contact MVTA</a>
+      <a href="/horse-arena" class="btn-secondary">Horse Arena →</a>
+    </div>
+  </main>
+</BaseLayout>
