@@ -1,48 +1,10 @@
 ---
+import { getCollection, render } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 
-const boardMembers = [
-  {
-    name: 'Lana Maeder',
-    role: 'President',
-    bio: 'A horse trainer and owner of Lana\'s Horses, a business dedicated to connecting individuals with their ideal equine companions.',
-  },
-  {
-    name: 'Jeff Sparman',
-    role: 'Vice President',
-    bio: 'An active community member involved in local initiatives in Meadow Vista, California.',
-  },
-  {
-    name: 'Scott Craig',
-    role: 'Secretary',
-    bio: 'An active community participant based in Meadow Vista, California.',
-  },
-  {
-    name: 'Richard Goodwin',
-    role: 'Treasurer',
-    bio: 'An avid trail user who regularly contributes articles to the MVTA Newsletter about local trails and usage concerns.',
-  },
-  {
-    name: 'Sherri Bloomfield',
-    role: 'Membership Coordinator',
-    bio: 'An engaged community resident involved in local initiatives.',
-  },
-  {
-    name: 'Chris Sihner',
-    role: 'Trail Boss',
-    bio: 'An active participant in Meadow Vista community efforts and trail maintenance.',
-  },
-  {
-    name: 'Michelle Hamil',
-    role: 'Board Member',
-    bio: 'An involved community resident supporting MVTA\'s mission.',
-  },
-  {
-    name: 'Tiffany Van der Linden',
-    role: 'President Emeritus',
-    bio: 'Active in local community initiatives and a longtime MVTA leader.',
-  },
-];
+const members = (await getCollection('board')).sort(
+  (a, b) => a.data.order - b.data.order
+);
 ---
 
 <BaseLayout
@@ -58,15 +20,29 @@ const boardMembers = [
     </p>
 
     <ul class="mt-12 grid gap-6 sm:grid-cols-2 list-none m-0 p-0">
-      {boardMembers.map((member) => (
-        <li class="card">
-          <p class="text-xs font-semibold uppercase tracking-wider text-brand-600 dark:text-brand-400 mb-1">
-            {member.role}
-          </p>
-          <h2 class="text-xl font-semibold text-gray-900 dark:text-white">{member.name}</h2>
-          <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">{member.bio}</p>
-        </li>
-      ))}
+      {members.map(async (member) => {
+        const { Content } = await render(member);
+        return (
+          <li class="card flex gap-4">
+            {member.data.image && (
+              <img
+                src={member.data.image}
+                alt={member.data.name}
+                class="h-20 w-20 flex-shrink-0 rounded-full object-cover"
+              />
+            )}
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-wider text-brand-600 dark:text-brand-400 mb-1">
+                {member.data.role}
+              </p>
+              <h2 class="text-xl font-semibold text-gray-900 dark:text-white">{member.data.name}</h2>
+              <div class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                <Content />
+              </div>
+            </div>
+          </li>
+        );
+      })}
     </ul>
 
     <div class="mt-12 prose-content">

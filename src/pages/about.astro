@@ -1,80 +1,236 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+
+const stats = [
+  { value: '1995', label: 'Founded' },
+  { value: '25+', label: 'Trail miles' },
+  { value: '2', label: 'Facilities managed' },
+  { value: '9', label: 'Volunteer board members' },
+];
+
+const activities = [
+  {
+    title: 'Trail Maintenance',
+    description: 'Volunteer work parties keep existing trails safe and accessible for hikers, cyclists, and equestrians year-round.',
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-7"><path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17 17.25 21A2.652 2.652 0 0 0 21 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 1 1-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 0 0 4.486-6.336l-3.276 3.277a3.004 3.004 0 0 1-2.25-2.25l3.276-3.276a4.5 4.5 0 0 0-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437 1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008Z" /></svg>`,
+  },
+  {
+    title: 'Trail Development',
+    description: 'We advocate for and help develop new trail connections throughout the Meadow Vista and Placer County foothills.',
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-7"><path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z" /></svg>`,
+  },
+  {
+    title: 'Facilities Management',
+    description: 'We manage the Meadow Vista Horse Arena and adjacent Dog Park on Combie Road, on land owned by Placer County.',
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-7"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Z" /></svg>`,
+  },
+  {
+    title: 'Community Events',
+    description: 'Group hikes, board meetings, and participation in local events like Pioneer Day bring our community together.',
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-7"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" /></svg>`,
+  },
+  {
+    title: 'Education & Stewardship',
+    description: 'Our newsletter and blog keep members informed about local trails, environmental stewardship, and conservation.',
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-7"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" /></svg>`,
+  },
+  {
+    title: 'Trail Access Advocacy',
+    description: 'We work with county agencies and landowners to protect and expand public access to trails across the foothills.',
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-7"><path stroke-linecap="round" stroke-linejoin="round" d="M10.34 15.84c-.688-.06-1.386-.09-2.09-.09H7.5a4.5 4.5 0 1 1 0-9h.75c.704 0 1.402-.03 2.09-.09m0 9.18c.253.962.584 1.892.985 2.783.247.55.06 1.21-.463 1.511l-.657.38c-.551.318-1.26.117-1.527-.461a20.845 20.845 0 0 1-1.44-4.282m3.102.069a18.03 18.03 0 0 1-.59-4.59c0-1.586.205-3.124.59-4.59m0 9.18a23.848 23.848 0 0 1 8.835 2.535M10.34 6.66a23.847 23.847 0 0 0 8.835-2.535m0 0A23.74 23.74 0 0 0 18.795 3m.38 1.125a23.91 23.91 0 0 1 1.014 5.395m-1.014 8.855c-.118.38-.245.754-.38 1.125m.38-1.125a23.91 23.91 0 0 0 1.014-5.395m0-3.46c.495.413.811 1.035.811 1.73 0 .695-.316 1.317-.811 1.73m0-3.46a24.347 24.347 0 0 1 0 3.46" /></svg>`,
+  },
+];
+
+const memberships = [
+  { tier: 'Individual', price: '$25', period: '/year', highlight: false },
+  { tier: 'Family', price: '$35', period: '/year', highlight: true },
+  { tier: 'Trail Guardian', price: '$100', period: '/year', highlight: false },
+  { tier: 'Lifetime Sponsor', price: '$1,000', period: ' one-time', highlight: false },
+];
 ---
 
 <BaseLayout
   title="About Us"
   description="Learn about Meadow Vista Trails Association — dedicated to establishing and maintaining safe trails in Meadow Vista and the surrounding foothill areas since 1995."
 >
-  <main class="mx-auto max-w-3xl px-4 py-16 sm:px-6">
-    <h1 class="text-4xl font-bold text-gray-900 dark:text-white">About MVTA</h1>
-
-    <div class="prose-content mt-8">
-      <p>
-        Meadow Vista Trails Association (MVTA) is dedicated to establishing and maintaining
-        safe trails in Meadow Vista and the surrounding areas. Founded in 1995, we serve
-        individuals interested in walking, dog walking, jogging, running, bike riding, and
-        horseback riding throughout the foothill communities of Placer County.
+  <!-- ── Hero ─────────────────────────────────────────────────────────────────── -->
+  <section class="relative h-[480px] sm:h-[560px] flex items-end overflow-hidden">
+    <img
+      src="/images/meadow-vista-sunset.jpg"
+      alt="Sunset over Meadow Vista foothills"
+      class="absolute inset-0 w-full h-full object-cover object-center"
+    />
+    <!-- gradient overlay -->
+    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
+    <div class="relative z-10 mx-auto w-full max-w-5xl px-4 pb-14 sm:px-6">
+      <p class="text-sm font-semibold uppercase tracking-widest text-accent-100 mb-3">
+        Since 1995
       </p>
-
-      <h2>Our Mission</h2>
-      <p>
-        Creating trails and community in Meadow Vista since 1995. We believe that access
-        to safe, well-maintained trails enriches the lives of residents and visitors alike,
-        connecting people with the natural beauty of the Sierra Nevada foothills.
-      </p>
-
-      <h2>What We Do</h2>
-      <ul>
-        <li>
-          <strong>Trail maintenance</strong> — volunteer work parties keep existing trails
-          safe and accessible for hikers, cyclists, and equestrians.
-        </li>
-        <li>
-          <strong>Trail development</strong> — we advocate for and help develop new trail
-          connections in the Meadow Vista area.
-        </li>
-        <li>
-          <strong>Facilities management</strong> — we manage the Meadow Vista Horse Arena
-          and adjacent Dog Park on Combie Road, on land owned by Placer County.
-        </li>
-        <li>
-          <strong>Community events</strong> — group hikes, board meetings, and participation
-          in local events like Pioneer Day.
-        </li>
-        <li>
-          <strong>Education</strong> — our newsletter and blog keep members informed about
-          local trails, environmental stewardship, and conservation.
-        </li>
-      </ul>
-
-      <h2>Membership</h2>
-      <p>
-        MVTA is a member-supported nonprofit. Your membership directly funds trail
-        maintenance, facility upkeep, and community programs. Membership levels:
-      </p>
-      <ul>
-        <li><strong>Individual</strong> — $25/year</li>
-        <li><strong>Family</strong> — $35/year</li>
-        <li><strong>Trail Guardian</strong> — $100/year</li>
-        <li><strong>Lifetime Sponsor</strong> — $1,000</li>
-      </ul>
-      <p>
-        <a href="/contact">Join MVTA today</a> to support trails in your community.
-      </p>
-
-      <h2>Governance</h2>
-      <p>
-        MVTA is governed by a volunteer board of nine members elected by the membership.
-        Elections are held in November or December of odd-numbered years, and board members
-        serve two-year terms. Learn more about our current <a href="/board">board of directors</a>.
-      </p>
-
-      <h2>Contact</h2>
-      <p>
-        Mailing address: P.O. Box 871, Meadow Vista, CA 95722<br />
-        Email: <a href="mailto:admin@mvtrails.org">admin@mvtrails.org</a>
+      <h1 class="text-5xl sm:text-6xl font-bold text-white text-balance leading-tight">
+        About MVTA
+      </h1>
+      <p class="mt-4 max-w-xl text-lg text-gray-200 text-pretty">
+        Dedicated to establishing and maintaining safe trails in Meadow Vista
+        and the surrounding Sierra Nevada foothills.
       </p>
     </div>
+  </section>
+
+  <!-- ── Stats bar ─────────────────────────────────────────────────────────────── -->
+  <section class="bg-brand-500 text-white">
+    <div class="mx-auto max-w-5xl px-4 sm:px-6">
+      <dl class="grid grid-cols-2 sm:grid-cols-4 divide-x divide-brand-400">
+        {stats.map((s) => (
+          <div class="flex flex-col items-center py-8 px-4 text-center">
+            <dt class="text-4xl font-bold text-white">{s.value}</dt>
+            <dd class="mt-1 text-sm font-medium text-brand-200 uppercase tracking-wide">{s.label}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </section>
+
+  <main>
+    <!-- ── Mission ──────────────────────────────────────────────────────────────── -->
+    <section class="mx-auto max-w-5xl px-4 py-16 sm:px-6">
+      <div class="grid gap-10 md:grid-cols-2 md:items-center">
+        <div>
+          <span class="text-xs font-semibold uppercase tracking-widest text-accent-500">Our Mission</span>
+          <h2 class="mt-2 text-3xl font-bold text-gray-900 dark:text-white text-balance">
+            Creating trails and community since 1995
+          </h2>
+          <p class="mt-4 text-gray-600 dark:text-gray-400 leading-relaxed">
+            Meadow Vista Trails Association (MVTA) is a member-supported nonprofit serving
+            walkers, joggers, cyclists, dog owners, and equestrians throughout the foothill
+            communities of Placer County. We believe that access to safe, well-maintained
+            trails enriches the lives of residents and visitors alike.
+          </p>
+          <p class="mt-3 text-gray-600 dark:text-gray-400 leading-relaxed">
+            From volunteer trail work parties to managing county-owned facilities, everything
+            we do connects people with the natural beauty of the Sierra Nevada foothills.
+          </p>
+          <div class="mt-8 flex flex-wrap gap-3">
+            <a href="/join" class="btn-primary">Become a Member</a>
+            <a href="/contact" class="btn-secondary">Get in Touch</a>
+          </div>
+        </div>
+        <div class="relative rounded-2xl overflow-hidden shadow-xl aspect-[4/3]">
+          <img
+            src="/images/trails/olmstead-loop/hero.jpeg"
+            alt="Hikers on the Olmstead Loop trail"
+            class="w-full h-full object-cover"
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- ── What We Do ───────────────────────────────────────────────────────────── -->
+    <section class="bg-brand-50 dark:bg-gray-900 py-16">
+      <div class="mx-auto max-w-5xl px-4 sm:px-6">
+        <div class="text-center mb-12">
+          <span class="text-xs font-semibold uppercase tracking-widest text-accent-500">What We Do</span>
+          <h2 class="mt-2 text-3xl font-bold text-gray-900 dark:text-white">
+            How we serve the community
+          </h2>
+        </div>
+        <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 list-none m-0 p-0">
+          {activities.map((a) => (
+            <li class="card flex flex-col gap-4">
+              <div class="flex items-center justify-center w-14 h-14 rounded-xl bg-brand-100 text-brand-600 dark:bg-brand-800 dark:text-brand-200 flex-shrink-0">
+                <Fragment set:html={a.icon} />
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{a.title}</h3>
+                <p class="mt-1 text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{a.description}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <!-- ── Membership ───────────────────────────────────────────────────────────── -->
+    <section class="mx-auto max-w-5xl px-4 py-16 sm:px-6">
+      <div class="text-center mb-12">
+        <span class="text-xs font-semibold uppercase tracking-widest text-accent-500">Support the Trails</span>
+        <h2 class="mt-2 text-3xl font-bold text-gray-900 dark:text-white">
+          Membership levels
+        </h2>
+        <p class="mt-3 text-gray-600 dark:text-gray-400 max-w-xl mx-auto">
+          Your membership directly funds trail maintenance, facility upkeep, and community programs.
+        </p>
+      </div>
+      <ul class="grid gap-5 sm:grid-cols-2 lg:grid-cols-4 list-none m-0 p-0">
+        {memberships.map((m) => (
+          <li class:list={[
+            'relative rounded-2xl border-2 p-6 flex flex-col items-center text-center transition-shadow hover:shadow-lg',
+            m.highlight
+              ? 'border-accent-500 bg-accent-500/5 dark:bg-accent-500/10'
+              : 'border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800'
+          ]}>
+            {m.highlight && (
+              <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-accent-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
+                Popular
+              </span>
+            )}
+            <span class="text-sm font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400">{m.tier}</span>
+            <div class="mt-3 flex items-end gap-1">
+              <span class="text-4xl font-bold text-gray-900 dark:text-white">{m.price}</span>
+              <span class="mb-1 text-sm text-gray-500 dark:text-gray-400">{m.period}</span>
+            </div>
+          </li>
+        ))}
+      </ul>
+      <div class="mt-8 text-center">
+        <a href="/join" class="btn-primary">Join MVTA Today</a>
+      </div>
+    </section>
+
+    <!-- ── Governance ───────────────────────────────────────────────────────────── -->
+    <section class="bg-brand-500 text-white py-16">
+      <div class="mx-auto max-w-5xl px-4 sm:px-6 grid gap-8 md:grid-cols-2 md:items-center">
+        <div>
+          <span class="text-xs font-semibold uppercase tracking-widest text-brand-200">Governance</span>
+          <h2 class="mt-2 text-3xl font-bold text-white">Volunteer-led, member-governed</h2>
+          <p class="mt-4 text-brand-100 leading-relaxed">
+            MVTA is governed by a volunteer board of nine members elected by the membership.
+            Elections are held in November or December of odd-numbered years, and board members
+            serve two-year terms. All members in good standing are eligible to vote and run for office.
+          </p>
+          <a href="/board" class="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-white underline underline-offset-4 hover:text-brand-200 transition-colors">
+            Meet the board of directors
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4">
+              <path fill-rule="evenodd" d="M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z" clip-rule="evenodd" />
+            </svg>
+          </a>
+        </div>
+        <div class="grid grid-cols-3 gap-4">
+          {['lana-maeder', 'jeff-sparman', 'scott-craig', 'richard-goodwin', 'sherri-bloomfield'].map((slug) => (
+            <div class="aspect-square rounded-2xl overflow-hidden ring-2 ring-white/20">
+              <img
+                src={`/images/board/${slug}.jpg`}
+                alt={slug.replace('-', ' ')}
+                class="w-full h-full object-cover"
+              />
+            </div>
+          ))}
+          <div class="aspect-square rounded-2xl bg-brand-400/40 flex items-center justify-center text-center p-2">
+            <span class="text-xs font-medium text-brand-100">9 volunteer members</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Contact strip ────────────────────────────────────────────────────────── -->
+    <section class="mx-auto max-w-5xl px-4 py-14 sm:px-6 flex flex-col sm:flex-row items-start sm:items-center gap-8">
+      <div class="flex-1">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Get in touch</h2>
+        <p class="mt-2 text-gray-600 dark:text-gray-400">
+          P.O. Box 871, Meadow Vista, CA 95722 &mdash;
+          <a href="mailto:admin@mvtrails.org" class="text-brand-600 dark:text-brand-400 no-underline hover:underline">admin@mvtrails.org</a>
+        </p>
+      </div>
+      <a href="/contact" class="btn-secondary shrink-0">Send a Message</a>
+    </section>
   </main>
 </BaseLayout>

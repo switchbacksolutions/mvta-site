@@ -3,13 +3,13 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 ---
 
 <BaseLayout
-  title="Join / Contact"
-  description="Join the Meadow Vista Trails Association or send us a message. Individual memberships start at $25/year."
+  title="Contact Us"
+  description="Send a message to the Meadow Vista Trails Association. We'd love to hear from you."
 >
   <main class="mx-auto max-w-4xl px-4 py-16 sm:px-6">
-    <h1 class="text-4xl font-bold text-gray-900 dark:text-white">Join / Contact</h1>
+    <h1 class="text-4xl font-bold text-gray-900 dark:text-white">Contact Us</h1>
     <p class="mt-4 text-lg text-gray-600 dark:text-gray-400">
-      Send us a message or become a member of MVTA. We'd love to hear from you.
+      Send us a message — we'd love to hear from you.
     </p>
 
     <div class="mt-12 grid gap-12 md:grid-cols-2">
@@ -70,79 +70,15 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
         </form>
       </div>
 
-      <!-- Become a member -->
+      <!-- Direct contact info -->
       <div>
-        <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-6">Become a Member</h2>
-        <p class="text-sm text-gray-600 dark:text-gray-400 mb-5">
-          Your membership directly funds trail maintenance and community programs. Choose a membership level below.
+        <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-6">Direct Contact</h2>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          Email: <a href="mailto:admin@mvtrails.org" class="text-brand-600 dark:text-brand-400">admin@mvtrails.org</a>
         </p>
-        <form
-          name="membership"
-          method="POST"
-          data-netlify="true"
-          netlify-honeypot="bot-field"
-          class="space-y-5"
-        >
-          <p class="hidden">
-            <label>Don't fill this out: <input name="bot-field" /></label>
-          </p>
-          <input type="hidden" name="form-name" value="membership" />
-
-          <div>
-            <label for="member-name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Name</label>
-            <input
-              type="text"
-              id="member-name"
-              name="name"
-              required
-              autocomplete="name"
-              class="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
-              placeholder="Jane Smith"
-            />
-          </div>
-
-          <div>
-            <label for="member-email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
-            <input
-              type="email"
-              id="member-email"
-              name="email"
-              required
-              autocomplete="email"
-              class="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
-              placeholder="jane@example.com"
-            />
-          </div>
-
-          <div>
-            <label for="membership-level" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Membership Level</label>
-            <select
-              id="membership-level"
-              name="membership_level"
-              required
-              class="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
-            >
-              <option value="">Select a level…</option>
-              <option value="individual">Individual — $25/year</option>
-              <option value="family">Family — $35/year</option>
-              <option value="trail-guardian">Trail Guardian — $100/year</option>
-              <option value="lifetime-sponsor">Lifetime Sponsor — $1,000</option>
-            </select>
-          </div>
-
-          <button type="submit" class="btn-primary">Join MVTA</button>
-        </form>
-
-        <!-- Direct contact info -->
-        <div class="mt-10 border-t border-gray-200 dark:border-gray-700 pt-8">
-          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">Direct Contact</h3>
-          <p class="text-sm text-gray-600 dark:text-gray-400">
-            Email: <a href="mailto:admin@mvtrails.org" class="text-brand-600 dark:text-brand-400">admin@mvtrails.org</a>
-          </p>
-          <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
-            Mail: P.O. Box 871, Meadow Vista, CA 95722
-          </p>
-        </div>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+          Mail: P.O. Box 871, Meadow Vista, CA 95722
+        </p>
       </div>
     </div>
   </main>

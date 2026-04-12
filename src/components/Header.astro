@@ -8,11 +8,23 @@
 
 const NAV_LINKS = [
   { href: '/trails', label: 'Trails' },
-  { href: '/horse-arena', label: 'Horse Arena' },
-  { href: '/dog-park', label: 'Dog Park' },
+  {
+    label: 'Facilities',
+    children: [
+      { href: '/horse-arena', label: 'Horse Arena' },
+      { href: '/dog-park', label: 'Dog Park' },
+    ],
+  },
   { href: '/events', label: 'Events' },
-  { href: '/about', label: 'About' },
-  { href: '/contact', label: 'Join / Contact' },
+  {
+    label: 'About Us',
+    children: [
+      { href: '/about', label: 'About' },
+      { href: '/board', label: 'Board' },
+      { href: '/contact', label: 'Contact Us' },
+    ],
+  },
+  { href: '/join', label: 'Join' },
 ];
 
 const pathname = new URL(Astro.request.url).pathname;
@@ -36,20 +48,58 @@ function isActive(href: string): boolean {
     <!-- Desktop navigation -->
     <nav aria-label="Main navigation">
       <ul class="flex items-center gap-6 list-none m-0 p-0">
-        {NAV_LINKS.map(({ href, label }) => (
-          <li>
-            <a
-              href={href}
-              class:list={[
-                'text-sm font-medium no-underline transition-colors',
-                isActive(href)
-                  ? 'text-brand-600 dark:text-brand-400'
-                  : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white',
-              ]}
-              aria-current={isActive(href) ? 'page' : undefined}
-            >
-              {label}
-            </a>
+        {NAV_LINKS.map((item) => (
+          <li class="relative group">
+            {'children' in item ? (
+              <>
+                <button
+                  type="button"
+                  class:list={[
+                    'flex items-center gap-1 text-sm font-medium transition-colors',
+                    item.children.some(c => isActive(c.href))
+                      ? 'text-brand-600 dark:text-brand-400'
+                      : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white',
+                  ]}
+                  aria-haspopup="true"
+                >
+                  {item.label}
+                  <svg class="h-3 w-3" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true">
+                    <path d="M6 8L1 3h10z" />
+                  </svg>
+                </button>
+                <ul class="absolute left-0 top-full mt-1 hidden min-w-max rounded-md border border-gray-200 bg-white py-1 shadow-lg group-hover:block dark:border-gray-700 dark:bg-gray-900 list-none p-0">
+                  {item.children.map(({ href, label }) => (
+                    <li>
+                      <a
+                        href={href}
+                        class:list={[
+                          'block px-4 py-2 text-sm no-underline transition-colors',
+                          isActive(href)
+                            ? 'text-brand-600 dark:text-brand-400'
+                            : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-800',
+                        ]}
+                        aria-current={isActive(href) ? 'page' : undefined}
+                      >
+                        {label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ) : (
+              <a
+                href={item.href}
+                class:list={[
+                  'text-sm font-medium no-underline transition-colors',
+                  isActive(item.href)
+                    ? 'text-brand-600 dark:text-brand-400'
+                    : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white',
+                ]}
+                aria-current={isActive(item.href) ? 'page' : undefined}
+              >
+                {item.label}
+              </a>
+            )}
           </li>
         ))}
       </ul>

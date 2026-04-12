@@ -48,4 +48,14 @@ const trails = defineCollection({
   }),
 });
 
-export const collections = { blog, trails };
+const board = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/board' }),
+  schema: z.object({
+    name: z.string(),
+    role: z.string(),
+    image: z.string().optional(),
+    order: z.number().default(99),
+  }),
+});
+
+export const collections = { blog, trails, board };
