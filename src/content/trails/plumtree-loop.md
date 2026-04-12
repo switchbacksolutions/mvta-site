@@ -2,6 +2,7 @@
 title: 'Plumtree Road – Bear River Canal Loop'
 description: 'A 4.8-mile loop combining canal utility road, canal trail, and hiking paths above the Bear River Canal near Meadow Vista — great for walkers, joggers, cyclists, and leashed dogs.'
 heroImage: '/images/trails/plumtree-loop/hero.jpeg'
+area: 'Meadow Vista/Applegate'
 trailType: 'Loop'
 distance: '4.8 miles'
 difficulty: 'Moderate'

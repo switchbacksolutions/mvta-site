@@ -2,6 +2,7 @@
 title: 'Stevens Trail – Colfax Side'
 description: 'A 7.2-mile historic toll road trail descending from Colfax to the North Fork American River canyon, with stunning views, seasonal waterfalls, and Gold Rush-era significance.'
 heroImage: '/images/trails/stevens-trail/hero.jpg'
+area: 'Weimar/Colfax'
 trailType: 'Out and Back'
 distance: '7.2 miles'
 difficulty: 'Moderate'

@@ -2,6 +2,7 @@
 title: 'Hidden Falls Regional Park'
 description: 'A family-friendly Placer County Regional Park with multi-use trails through oak woodlands and riparian creeksides, featuring waterfalls, a wheelchair-accessible loop, and options for all abilities.'
 heroImage: '/images/trails/hidden-falls/hero.jpeg'
+area: 'Meadow Vista/Applegate'
 trailType: 'Out and Back'
 difficulty: 'Moderate'
 uses:

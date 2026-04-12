@@ -2,6 +2,7 @@
 title: 'Euchre Bar – Alta'
 description: 'A challenging Gold Rush-era trail descending to the North Fork American River with mining history, stunning canyon views, a suspension bridge, and optional extension to Foresthill Divide.'
 heroImage: '/images/trails/euchre-bar/hero.jpeg'
+area: 'Alta/Dutch Flat'
 trailType: 'Out and Back'
 distance: '5 miles'
 difficulty: 'Challenging'

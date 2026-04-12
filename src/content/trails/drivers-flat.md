@@ -2,6 +2,7 @@
 title: 'Drivers Flat to Ruck-a-Chucky'
 description: 'A 2.5-mile dirt road descending to the American River at Ruck-a-Chucky with primitive camping, equestrian-friendly parking, and access to 5 riverside campsites on the Middle Fork.'
 heroImage: '/images/trails/drivers-flat/hero.jpg'
+area: 'Weimar/Colfax'
 trailType: 'Out and Back'
 distance: '2.5 miles'
 difficulty: 'Moderate'

@@ -2,6 +2,7 @@
 title: 'Olmstead Loop Trail'
 description: 'An 8.6-mile loop through rolling oak woodlands and expansive meadows with spectacular Sierra Range views, seasonal wildflowers, and creek crossings near Cool, CA.'
 heroImage: '/images/trails/olmstead-loop/hero.jpeg'
+area: 'Auburn Area'
 trailType: 'Loop'
 distance: '8.6 miles'
 difficulty: 'Moderate'

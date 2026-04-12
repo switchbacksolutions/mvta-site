@@ -37,6 +37,7 @@ const trails = defineCollection({
     trailType: z.enum(['Loop', 'Out and Back', 'Point to Point']),
     distance: z.string().optional(),
     difficulty: z.enum(['Easy', 'Moderate', 'Challenging']),
+    area: z.enum(['Meadow Vista/Applegate', 'Weimar/Colfax', 'Auburn Area', 'Alta/Dutch Flat', 'High Country']),
     uses: z.array(z.string()).default([]),
     access: z.string().optional(),
     directionsUrl: z.string().optional(),

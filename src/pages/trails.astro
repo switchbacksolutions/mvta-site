@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 
 const trails = await getCollection('trails');
@@ -11,85 +12,224 @@ const difficultyColor: Record<string, string> = {
 };
 
 const allUses = [...new Set(trails.flatMap((t) => t.data.uses))].sort();
+
+const areas = ['Meadow Vista/Applegate', 'Weimar/Colfax', 'Auburn Area', 'Alta/Dutch Flat', 'High Country'] as const;
+
+function distanceMiles(raw: string | undefined): number | null {
+  if (!raw) return null;
+  const match = raw.match(/[\d.]+/);
+  return match ? parseFloat(match[0]) : null;
+}
+
+function distanceBucket(raw: string | undefined): string {
+  const miles = distanceMiles(raw);
+  if (miles === null) return '';
+  if (miles < 3) return 'short';
+  if (miles <= 7) return 'medium';
+  return 'long';
+}
+
+const difficultyOptions = [
+  { value: '', label: 'Any difficulty' },
+  { value: 'easy', label: 'Easy' },
+  { value: 'moderate', label: 'Moderate' },
+  { value: 'challenging', label: 'Challenging' },
+];
+
+const distanceOptions = [
+  { value: '', label: 'Any distance' },
+  { value: 'short', label: 'Short (< 3 mi)' },
+  { value: 'medium', label: 'Medium (3–7 mi)' },
+  { value: 'long', label: 'Long (7+ mi)' },
+];
 ---
 
 <BaseLayout
   title="Trails"
   description="Explore trails near Meadow Vista, CA — hiking, mountain biking, and equestrian routes in the Sierra Nevada foothills maintained and promoted by MVTA."
 >
-  <main class="mx-auto max-w-5xl px-4 py-16 sm:px-6">
+  <main class="mx-auto max-w-6xl px-4 py-12 sm:px-6">
     <h1 class="text-4xl font-bold text-gray-900 dark:text-white">Trails</h1>
-    <p class="mt-4 text-xl text-gray-600 dark:text-gray-400 text-pretty">
+    <p class="mt-3 text-xl text-gray-600 dark:text-gray-400 text-pretty">
       Your next adventure is closer to home than you think! Explore these foothill trails
       near Meadow Vista, maintained and championed by MVTA volunteers.
     </p>
 
-    <!-- Search and tag filter controls -->
-    <div class="mt-8 space-y-3">
+    <!-- Search + mobile filter toggle -->
+    <div class="mt-6 flex gap-3">
       <input
         id="trail-search"
         type="search"
         placeholder="Search trails by name…"
-        class="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-500"
+        class="flex-1 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-500"
       />
-      <div class="flex flex-wrap gap-2" id="tag-filters" aria-label="Filter by use">
-        {allUses.map((use) => (
-          <button
-            type="button"
-            data-tag={use.toLowerCase()}
-            class="tag-filter-btn tag-pill cursor-pointer border border-transparent transition-colors hover:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/50"
-          >
-            {use}
-          </button>
-        ))}
-      </div>
+      <button
+        id="filters-toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="filters-sidebar"
+        class="lg:hidden inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z" />
+        </svg>
+        Filters
+        <span id="filter-badge" class="hidden rounded-full bg-brand-600 px-1.5 py-0.5 text-xs font-bold leading-none text-white dark:bg-brand-400">0</span>
+      </button>
     </div>
 
-    <p id="no-results" class="mt-10 hidden text-center text-gray-500 dark:text-gray-400">
-      No trails match your search or filters.
-    </p>
+    <!-- Two-column layout: results + sidebar -->
+    <div class="mt-6 lg:flex lg:gap-8 lg:items-start">
 
-    <ul id="trails-list" class="mt-8 grid gap-6 list-none m-0 p-0 sm:grid-cols-2">
-      {trails.map((trail) => (
-        <li
-          data-title={trail.data.title.toLowerCase()}
-          data-uses={trail.data.uses.map((u) => u.toLowerCase()).join('|')}
-        >
-          <a
-            href={`/trails/${trail.id}`}
-            class="group flex flex-col h-full rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden hover:shadow-md transition-shadow no-underline dark:border-gray-700 dark:bg-gray-800"
-          >
-            {trail.data.heroImage && (
-              <div class="h-48 w-full overflow-hidden">
-                <img
-                  src={trail.data.heroImage}
-                  alt={trail.data.title}
-                  class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  loading="lazy"
-                />
-              </div>
-            )}
-            <div class="flex flex-col flex-1 p-5">
-              <div class="flex flex-wrap items-start justify-between gap-3 mb-3">
-                <h2 class="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">
-                  {trail.data.title}
-                </h2>
-                <div class="flex flex-wrap gap-1.5 shrink-0">
-                  <span class:list={['inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold', difficultyColor[trail.data.difficulty]]}>
-                    {trail.data.difficulty}
-                  </span>
+      <!-- Results -->
+      <div class="flex-1 min-w-0">
+        <p id="results-count" class="mb-4 text-sm text-gray-500 dark:text-gray-400"></p>
+
+        <p id="no-results" class="mt-10 hidden text-center text-gray-500 dark:text-gray-400">
+          No trails match your filters. <button id="clear-filters-inline" type="button" class="font-medium text-brand-600 hover:underline dark:text-brand-400">Clear all filters</button>
+        </p>
+
+        <ul id="trails-list" class="grid gap-6 list-none m-0 p-0 sm:grid-cols-2">
+          {trails.map((trail) => (
+            <li
+              data-title={trail.data.title.toLowerCase()}
+              data-uses={trail.data.uses.map((u) => u.toLowerCase()).join('|')}
+              data-difficulty={trail.data.difficulty.toLowerCase()}
+              data-area={trail.data.area.toLowerCase()}
+              data-distance={distanceBucket(trail.data.distance)}
+            >
+              <a
+                href={`/trails/${trail.id}`}
+                class="group flex flex-col h-full rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden hover:shadow-md transition-shadow no-underline dark:border-gray-700 dark:bg-gray-800"
+              >
+                {trail.data.heroImage && (
+                  <div class="h-48 w-full overflow-hidden">
+                    <Image
+                      src={trail.data.heroImage}
+                      alt={trail.data.title}
+                      width={800}
+                      height={400}
+                      class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      loading="lazy"
+                    />
+                  </div>
+                )}
+                <div class="flex flex-col flex-1 p-5">
+                  <div class="flex flex-wrap items-start justify-between gap-3 mb-3">
+                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">
+                      {trail.data.title}
+                    </h2>
+                    <div class="flex flex-wrap gap-1.5 shrink-0">
+                      <span class:list={['inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold', difficultyColor[trail.data.difficulty]]}>
+                        {trail.data.difficulty}
+                      </span>
+                    </div>
+                  </div>
+                  <p class="text-sm text-gray-600 dark:text-gray-400 flex-1 line-clamp-3">{trail.data.description}</p>
+                  <div class="mt-4 flex flex-wrap gap-1.5">
+                    <span class="tag-pill">{trail.data.trailType}</span>
+                    {trail.data.distance && <span class="tag-pill">{trail.data.distance}</span>}
+                  </div>
                 </div>
-              </div>
-              <p class="text-sm text-gray-600 dark:text-gray-400 flex-1 line-clamp-3">{trail.data.description}</p>
-              <div class="mt-4 flex flex-wrap gap-1.5">
-                <span class="tag-pill">{trail.data.trailType}</span>
-                {trail.data.distance && <span class="tag-pill">{trail.data.distance}</span>}
-              </div>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- Filter sidebar -->
+      <aside
+        id="filters-sidebar"
+        class="hidden lg:block lg:w-60 xl:w-64 shrink-0"
+      >
+        <div class="sticky top-6 rounded-xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+
+          <!-- Clear all -->
+          <div class="flex items-center justify-between mb-4">
+            <span class="text-sm font-semibold text-gray-900 dark:text-white">Filters</span>
+            <button
+              id="clear-filters"
+              type="button"
+              class="hidden text-xs font-medium text-brand-600 hover:underline dark:text-brand-400"
+            >
+              Clear all
+            </button>
+          </div>
+
+          <!-- Difficulty -->
+          <fieldset class="mb-5">
+            <legend class="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+              Difficulty
+            </legend>
+            <div class="space-y-0.5">
+              {difficultyOptions.map(({ value, label }) => (
+                <label class="group flex cursor-pointer items-center gap-2.5 rounded-lg px-2 py-1.5 text-sm text-gray-700 transition-colors hover:bg-gray-50 has-[:checked]:bg-brand-50 has-[:checked]:text-brand-700 dark:text-gray-300 dark:hover:bg-gray-700/50 dark:has-[:checked]:bg-brand-900/30 dark:has-[:checked]:text-brand-300">
+                  <input type="radio" name="difficulty" value={value} class="peer sr-only" checked={value === ''} />
+                  <span class="h-3.5 w-3.5 shrink-0 rounded-full border-2 border-gray-300 transition-colors peer-checked:border-brand-600 peer-checked:bg-brand-600 dark:border-gray-600 dark:peer-checked:border-brand-400 dark:peer-checked:bg-brand-400"></span>
+                  {label}
+                </label>
+              ))}
             </div>
-          </a>
-        </li>
-      ))}
-    </ul>
+          </fieldset>
+
+          <!-- Distance -->
+          <fieldset class="mb-5 border-t border-gray-100 pt-5 dark:border-gray-700">
+            <legend class="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+              Distance
+            </legend>
+            <div class="space-y-0.5">
+              {distanceOptions.map(({ value, label }) => (
+                <label class="group flex cursor-pointer items-center gap-2.5 rounded-lg px-2 py-1.5 text-sm text-gray-700 transition-colors hover:bg-gray-50 has-[:checked]:bg-brand-50 has-[:checked]:text-brand-700 dark:text-gray-300 dark:hover:bg-gray-700/50 dark:has-[:checked]:bg-brand-900/30 dark:has-[:checked]:text-brand-300">
+                  <input type="radio" name="distance" value={value} class="peer sr-only" checked={value === ''} />
+                  <span class="h-3.5 w-3.5 shrink-0 rounded-full border-2 border-gray-300 transition-colors peer-checked:border-brand-600 peer-checked:bg-brand-600 dark:border-gray-600 dark:peer-checked:border-brand-400 dark:peer-checked:bg-brand-400"></span>
+                  {label}
+                </label>
+              ))}
+            </div>
+          </fieldset>
+
+          <!-- Area -->
+          <fieldset class="mb-5 border-t border-gray-100 pt-5 dark:border-gray-700">
+            <legend class="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+              Area
+            </legend>
+            <div class="space-y-0.5">
+              <label class="group flex cursor-pointer items-center gap-2.5 rounded-lg px-2 py-1.5 text-sm text-gray-700 transition-colors hover:bg-gray-50 has-[:checked]:bg-brand-50 has-[:checked]:text-brand-700 dark:text-gray-300 dark:hover:bg-gray-700/50 dark:has-[:checked]:bg-brand-900/30 dark:has-[:checked]:text-brand-300">
+                <input type="radio" name="area" value="" class="peer sr-only" checked />
+                <span class="h-3.5 w-3.5 shrink-0 rounded-full border-2 border-gray-300 transition-colors peer-checked:border-brand-600 peer-checked:bg-brand-600 dark:border-gray-600 dark:peer-checked:border-brand-400 dark:peer-checked:bg-brand-400"></span>
+                All areas
+              </label>
+              {areas.map((area) => (
+                <label class="group flex cursor-pointer items-center gap-2.5 rounded-lg px-2 py-1.5 text-sm text-gray-700 transition-colors hover:bg-gray-50 has-[:checked]:bg-brand-50 has-[:checked]:text-brand-700 dark:text-gray-300 dark:hover:bg-gray-700/50 dark:has-[:checked]:bg-brand-900/30 dark:has-[:checked]:text-brand-300">
+                  <input type="radio" name="area" value={area.toLowerCase()} class="peer sr-only" />
+                  <span class="h-3.5 w-3.5 shrink-0 rounded-full border-2 border-gray-300 transition-colors peer-checked:border-brand-600 peer-checked:bg-brand-600 dark:border-gray-600 dark:peer-checked:border-brand-400 dark:peer-checked:bg-brand-400"></span>
+                  {area}
+                </label>
+              ))}
+            </div>
+          </fieldset>
+
+          <!-- Activities -->
+          <fieldset class="border-t border-gray-100 pt-5 dark:border-gray-700">
+            <legend class="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+              Activities
+            </legend>
+            <div class="flex flex-wrap gap-1.5" id="tag-filters" aria-label="Filter by activity">
+              {allUses.map((use) => (
+                <button
+                  type="button"
+                  data-tag={use.toLowerCase()}
+                  class="tag-filter-btn tag-pill cursor-pointer border border-transparent transition-colors hover:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/50"
+                >
+                  {use}
+                </button>
+              ))}
+            </div>
+          </fieldset>
+
+        </div>
+      </aside>
+    </div>
 
     <div class="mt-12 card bg-brand-50 dark:bg-brand-900/30 border-brand-200 dark:border-brand-700">
       <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Know a trail we're missing?</h2>
@@ -104,34 +244,123 @@ const allUses = [...new Set(trails.flatMap((t) => t.data.uses))].sort();
 
 <script>
   const searchInput = document.getElementById('trail-search') as HTMLInputElement;
+  const sidebar = document.getElementById('filters-sidebar')!;
+  const filterToggle = document.getElementById('filters-toggle')!;
+  const clearFiltersBtn = document.getElementById('clear-filters')!;
+  const clearFiltersInline = document.getElementById('clear-filters-inline')!;
+  const filterBadge = document.getElementById('filter-badge')!;
+  const resultsCount = document.getElementById('results-count')!;
   const tagButtons = document.querySelectorAll<HTMLButtonElement>('.tag-filter-btn');
   const trailItems = document.querySelectorAll<HTMLLIElement>('#trails-list li');
   const noResults = document.getElementById('no-results')!;
+  const totalCount = trailItems.length;
 
   const activeTags = new Set<string>();
 
+  function getRadioValue(name: string): string {
+    return (document.querySelector(`input[name="${name}"]:checked`) as HTMLInputElement)?.value ?? '';
+  }
+
+  function countActiveFilters(): number {
+    let count = 0;
+    if (searchInput.value.trim()) count++;
+    if (getRadioValue('difficulty')) count++;
+    if (getRadioValue('distance')) count++;
+    if (getRadioValue('area')) count++;
+    count += activeTags.size;
+    return count;
+  }
+
+  function updateFilterUI() {
+    const active = countActiveFilters();
+    // Badge on mobile toggle
+    if (active > 0) {
+      filterBadge.textContent = String(active);
+      filterBadge.classList.remove('hidden');
+    } else {
+      filterBadge.classList.add('hidden');
+    }
+    // "Clear all" link in sidebar
+    if (active > 0) {
+      clearFiltersBtn.classList.remove('hidden');
+    } else {
+      clearFiltersBtn.classList.add('hidden');
+    }
+  }
+
   function applyFilters() {
     const query = searchInput.value.toLowerCase().trim();
+    const difficulty = getRadioValue('difficulty');
+    const area = getRadioValue('area');
+    const distance = getRadioValue('distance');
     let visibleCount = 0;
 
     trailItems.forEach((item) => {
       const title = item.dataset.title ?? '';
       const uses = item.dataset.uses ?? '';
+      const itemDifficulty = item.dataset.difficulty ?? '';
+      const itemArea = item.dataset.area ?? '';
+      const itemDistance = item.dataset.distance ?? '';
 
       const matchesSearch = !query || title.includes(query);
+      const matchesDifficulty = !difficulty || itemDifficulty === difficulty;
+      const matchesArea = !area || itemArea === area;
+      const matchesDistance = !distance || itemDistance === distance;
       const matchesTags =
         activeTags.size === 0 ||
         [...activeTags].every((tag) => uses.split('|').some((u) => u === tag));
 
-      const visible = matchesSearch && matchesTags;
+      const visible = matchesSearch && matchesDifficulty && matchesArea && matchesDistance && matchesTags;
       item.style.display = visible ? '' : 'none';
       if (visible) visibleCount++;
     });
 
     noResults.classList.toggle('hidden', visibleCount > 0);
+    resultsCount.textContent = visibleCount === totalCount
+      ? `${totalCount} trails`
+      : `${visibleCount} of ${totalCount} trails`;
+
+    updateFilterUI();
   }
 
+  function resetAllFilters() {
+    searchInput.value = '';
+    document.querySelectorAll<HTMLInputElement>('input[name="difficulty"]').forEach((r) => { r.checked = r.value === ''; });
+    document.querySelectorAll<HTMLInputElement>('input[name="distance"]').forEach((r) => { r.checked = r.value === ''; });
+    document.querySelectorAll<HTMLInputElement>('input[name="area"]').forEach((r) => { r.checked = r.value === ''; });
+    activeTags.clear();
+    tagButtons.forEach((btn) => {
+      btn.setAttribute('aria-pressed', 'false');
+      btn.classList.remove('bg-brand-600', 'text-white', 'dark:bg-brand-500', 'border-brand-600', 'dark:border-brand-500');
+      btn.classList.add('border-transparent');
+    });
+    applyFilters();
+  }
+
+  // Initialize results count
+  resultsCount.textContent = `${totalCount} trails`;
+
+  // Mobile sidebar toggle
+  filterToggle.addEventListener('click', () => {
+    const isHidden = sidebar.classList.contains('hidden');
+    sidebar.classList.toggle('hidden', !isHidden);
+    // On mobile, make sidebar full-width when open
+    if (isHidden) {
+      sidebar.classList.add('block', 'w-full', 'mb-4');
+    } else {
+      sidebar.classList.remove('block', 'w-full', 'mb-4');
+    }
+    filterToggle.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
+  });
+
+  clearFiltersBtn.addEventListener('click', resetAllFilters);
+  clearFiltersInline.addEventListener('click', resetAllFilters);
+
   searchInput.addEventListener('input', applyFilters);
+
+  document.querySelectorAll<HTMLInputElement>('input[name="difficulty"], input[name="distance"], input[name="area"]').forEach((radio) => {
+    radio.addEventListener('change', applyFilters);
+  });
 
   tagButtons.forEach((btn) => {
     btn.addEventListener('click', () => {
@@ -139,25 +368,13 @@ const allUses = [...new Set(trails.flatMap((t) => t.data.uses))].sort();
       if (activeTags.has(tag)) {
         activeTags.delete(tag);
         btn.setAttribute('aria-pressed', 'false');
-        btn.classList.remove(
-          'bg-brand-600',
-          'text-white',
-          'dark:bg-brand-500',
-          'border-brand-600',
-          'dark:border-brand-500',
-        );
+        btn.classList.remove('bg-brand-600', 'text-white', 'dark:bg-brand-500', 'border-brand-600', 'dark:border-brand-500');
         btn.classList.add('border-transparent');
       } else {
         activeTags.add(tag);
         btn.setAttribute('aria-pressed', 'true');
         btn.classList.remove('border-transparent');
-        btn.classList.add(
-          'bg-brand-600',
-          'text-white',
-          'dark:bg-brand-500',
-          'border-brand-600',
-          'dark:border-brand-500',
-        );
+        btn.classList.add('bg-brand-600', 'text-white', 'dark:bg-brand-500', 'border-brand-600', 'dark:border-brand-500');
       }
       applyFilters();
     });
