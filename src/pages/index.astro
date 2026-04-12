@@ -21,41 +21,95 @@ const trails = featuredTrailIds
 >
   <main>
     <!-- Hero -->
-    <section class="bg-brand-800 dark:bg-brand-900">
-      <div class="mx-auto max-w-5xl px-4 py-24 sm:px-6 text-center">
-        <h1 class="text-5xl font-bold tracking-tight text-white text-balance">
-          Good trails.<br />
-          <span class="text-brand-200">Great friends.</span>
-        </h1>
-        <p class="mx-auto mt-6 max-w-2xl text-xl text-brand-100 text-pretty">
-          Join a community of like-minded hikers, bikers, and riders dedicated to
-          loving foothill trails in Meadow Vista and the surrounding foothills.
-        </p>
-        <div class="mt-10 flex flex-wrap justify-center gap-4">
-          <a href="/contact" class="btn-primary">
-            Join MVTA
-          </a>
-          <a href="/trails" class="btn-secondary">
-            See Trails
-          </a>
+    <section class="bg-brand-700 overflow-hidden">
+      <div class="mx-auto max-w-5xl px-4 py-16 sm:px-6 sm:py-20 grid md:grid-cols-2 gap-10 items-center">
+        <div>
+          <p class="text-sm font-semibold uppercase tracking-widest text-brand-300 mb-3">
+            Meadow Vista, CA · Since 1995
+          </p>
+          <h1 class="text-5xl sm:text-6xl font-bold text-white text-balance leading-tight">
+            Good trails.<br />
+            <span class="text-brand-200">Great friends.</span>
+          </h1>
+          <p class="mt-4 max-w-xl text-lg text-brand-100 text-pretty leading-relaxed">
+            Join a community of like-minded hikers, bikers, and riders dedicated to
+            loving foothill trails in Meadow Vista and the surrounding foothills.
+          </p>
+          <div class="mt-8 flex flex-wrap gap-4">
+            <a href="/contact" class="btn-primary">
+              Join MVTA
+            </a>
+            <a
+              href="/trails"
+              class="inline-flex items-center gap-2 rounded-md border-2 border-white/70 px-5 py-2.5 text-sm font-semibold text-white hover:bg-white/10 hover:border-white transition-colors duration-150"
+            >
+              See Trails
+            </a>
+          </div>
+        </div>
+        <div class="relative rounded-2xl overflow-hidden shadow-2xl aspect-[4/3] ring-1 ring-white/10">
+          <img
+            src="/images/meadow-vista-sunset.jpg"
+            alt="Sunset over Meadow Vista foothills"
+            class="w-full h-full object-cover object-center"
+          />
         </div>
       </div>
     </section>
 
-    <!-- Mission strip -->
-    <section class="bg-brand-50 dark:bg-brand-900/40">
-      <div class="mx-auto max-w-5xl px-4 py-10 sm:px-6 text-center">
-        <p class="text-lg text-brand-700 dark:text-brand-200 font-medium">
-          Meadow Vista Trails Association is dedicated to establishing and maintaining safe trails
-          in Meadow Vista and the surrounding areas — serving walkers, joggers, cyclists, and equestrians since 1995.
-        </p>
+    <!-- Stats bar -->
+    <section class="bg-brand-500 text-white">
+      <div class="mx-auto max-w-5xl px-4 sm:px-6">
+        <dl class="grid grid-cols-2 sm:grid-cols-4 divide-x divide-brand-400">
+          {[
+            { value: '1995', label: 'Founded' },
+            { value: '25+', label: 'Trail miles' },
+            { value: '2', label: 'Facilities managed' },
+            { value: '9', label: 'Volunteer board members' },
+          ].map((s) => (
+            <div class="flex flex-col items-center py-8 px-4 text-center">
+              <dt class="text-4xl font-bold text-white">{s.value}</dt>
+              <dd class="mt-1 text-sm font-medium text-brand-200 uppercase tracking-wide">{s.label}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </section>
+
+    <!-- Mission -->
+    <section class="mx-auto max-w-5xl px-4 py-16 sm:px-6">
+      <div class="grid gap-10 md:grid-cols-2 md:items-center">
+        <div>
+          <span class="text-xs font-semibold uppercase tracking-widest text-accent-500">Our Mission</span>
+          <h2 class="mt-2 text-3xl font-bold text-gray-900 dark:text-white text-balance">
+            Dedicated to trails and community
+          </h2>
+          <p class="mt-4 text-gray-600 dark:text-gray-400 leading-relaxed">
+            Meadow Vista Trails Association is dedicated to establishing and maintaining safe trails
+            in Meadow Vista and the surrounding areas — serving walkers, joggers, cyclists, and equestrians since 1995.
+          </p>
+          <div class="mt-6 flex flex-wrap gap-3">
+            <a href="/about" class="btn-secondary">Learn More</a>
+          </div>
+        </div>
+        <div class="relative rounded-2xl overflow-hidden shadow-xl aspect-[4/3]">
+          <img
+            src="/images/trails/olmstead-loop/hero.jpeg"
+            alt="Hikers on the Olmstead Loop trail"
+            class="w-full h-full object-cover"
+          />
+        </div>
       </div>
     </section>
 
     <!-- Featured trails -->
-    <section class="mx-auto max-w-5xl px-4 py-16 sm:px-6">
+    <section class="bg-brand-50 dark:bg-gray-900 py-16">
+      <div class="mx-auto max-w-5xl px-4 sm:px-6">
       <div class="flex items-baseline justify-between mb-8">
-        <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Featured Trails</h2>
+        <div>
+          <span class="text-xs font-semibold uppercase tracking-widest text-accent-500">Get Outside</span>
+          <h2 class="mt-1 text-3xl font-bold text-gray-900 dark:text-white">Featured Trails</h2>
+        </div>
         <a href="/trails" class="text-sm font-medium text-brand-600 no-underline hover:underline dark:text-brand-400">
           View all trails →
         </a>
@@ -83,13 +137,16 @@ const trails = featuredTrailIds
           </li>
         ))}
       </ul>
+      </div>
     </section>
 
     <!-- Facilities -->
-    <section class="bg-gray-50 dark:bg-gray-900">
-      <div class="mx-auto max-w-5xl px-4 py-16 sm:px-6">
-        <h2 class="mb-10 text-center text-3xl font-bold text-gray-900 dark:text-white">Facilities</h2>
-        <div class="grid gap-6 sm:grid-cols-2">
+    <section class="mx-auto max-w-5xl px-4 py-16 sm:px-6">
+      <div class="text-center mb-10">
+        <span class="text-xs font-semibold uppercase tracking-widest text-accent-500">Open to the Public</span>
+        <h2 class="mt-2 text-3xl font-bold text-gray-900 dark:text-white">Facilities</h2>
+      </div>
+      <div class="grid gap-6 sm:grid-cols-2">
           <a href="/horse-arena" class="card group no-underline block">
             <h3 class="font-semibold text-gray-900 dark:text-white group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">
               Meadow Vista Horse Arena
@@ -109,14 +166,17 @@ const trails = featuredTrailIds
             <span class="mt-4 inline-block text-sm text-brand-600 dark:text-brand-400 font-medium">Learn more →</span>
           </a>
         </div>
-      </div>
     </section>
 
     <!-- Recent news -->
     {recentPosts.length > 0 && (
-      <section class="mx-auto max-w-5xl px-4 py-16 sm:px-6">
+      <section class="bg-brand-50 dark:bg-gray-900 py-16">
+        <div class="mx-auto max-w-5xl px-4 sm:px-6">
         <div class="flex items-baseline justify-between mb-8">
-          <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Latest News</h2>
+          <div>
+            <span class="text-xs font-semibold uppercase tracking-widest text-accent-500">Stay Informed</span>
+            <h2 class="mt-1 text-3xl font-bold text-gray-900 dark:text-white">Latest News</h2>
+          </div>
           <a href="/blog" class="text-sm font-medium text-brand-600 no-underline hover:underline dark:text-brand-400">
             View all →
           </a>
@@ -145,6 +205,7 @@ const trails = featuredTrailIds
             </li>
           ))}
         </ul>
+        </div>
       </section>
     )}
 
