@@ -6,39 +6,114 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
   title="Meadow Vista Dog Park"
   description="A dog park and agility course located behind the Meadow Vista Horse Arena on Combie Road, open to the public and managed by MVTA."
 >
-  <main class="mx-auto max-w-3xl px-4 py-16 sm:px-6">
-    <h1 class="text-4xl font-bold text-gray-900 dark:text-white">Meadow Vista Dog Park</h1>
-    <p class="mt-4 text-xl text-gray-600 dark:text-gray-400">
-      A dog park and agility course located behind the Horse Arena, open to the public.
-    </p>
-
-    <div class="prose-content mt-10">
-      <h2>About the Dog Park</h2>
-      <p>
-        The Meadow Vista Dog Park is an off-leash facility featuring an agility course with
-        coursing obstacles. It is located directly behind the{' '}
-        <a href="/horse-arena">Meadow Vista Horse Arena</a> on Combie Road and is open
-        to the public at no charge.
-      </p>
-
-      <h2>Access</h2>
-      <p>
-        The dog park is accessible through the Horse Arena entrance on Combie Road.
-        No MVTA membership is required to use the facility. For directions or access
-        information, contact us at{' '}
-        <a href="mailto:admin@mvtrails.org">admin@mvtrails.org</a>.
-      </p>
-
-      <h2>Get Involved</h2>
-      <p>
-        MVTA volunteers help maintain the dog park. If you'd like to pitch in or have
-        suggestions for improvements, <a href="/contact">reach out to us</a>.
+  <!-- Hero -->
+  <div class="relative h-[28rem] sm:h-[36rem] w-full overflow-hidden">
+    <img
+      src="/images/dog-park.jpeg"
+      alt="Meadow Vista Dog Park sign"
+      class="absolute inset-0 h-full w-full object-cover object-center"
+    />
+    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
+    <div class="absolute bottom-0 left-0 right-0 px-6 pb-10 sm:px-12">
+      <span class="tag-pill mb-3 inline-block bg-accent-500 text-white dark:bg-accent-500 dark:text-white">Public Facility</span>
+      <h1 class="text-4xl font-bold text-white sm:text-5xl text-balance">
+        Meadow Vista Dog Park
+      </h1>
+      <p class="mt-3 max-w-xl text-lg text-gray-200">
+        An off-leash dog park and agility course on Combie Road, open to the public and maintained by MVTA volunteers.
       </p>
     </div>
+  </div>
 
-    <div class="mt-10 flex flex-wrap gap-4">
+  <main class="mx-auto max-w-5xl px-4 py-14 sm:px-6">
+
+    <!-- Feature grid -->
+    <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <div class="card flex flex-col gap-2">
+        <div class="text-3xl">🐕</div>
+        <h3 class="text-base font-semibold text-gray-900 dark:text-white">Off-Leash Area</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">A fully fenced off-leash space where dogs can run and socialize freely.</p>
+      </div>
+      <div class="card flex flex-col gap-2">
+        <div class="text-3xl">🏃</div>
+        <h3 class="text-base font-semibold text-gray-900 dark:text-white">Agility Course</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">Coursing obstacles and agility equipment for active pups and their people.</p>
+      </div>
+      <div class="card flex flex-col gap-2">
+        <div class="text-3xl">🐴</div>
+        <h3 class="text-base font-semibold text-gray-900 dark:text-white">Adjacent Horse Arena</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">Located directly behind the <a href="/horse-arena">Meadow Vista Horse Arena</a> — bring the whole family.</p>
+      </div>
+    </div>
+
+    <!-- About section -->
+    <section class="mt-14">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-white">About the Dog Park</h2>
+      <div class="mt-1 h-1 w-16 rounded bg-accent-500"></div>
+      <div class="prose-content mt-6">
+        <p>
+          The Meadow Vista Dog Park is an off-leash facility featuring an agility course with
+          coursing obstacles. It is located directly behind the Meadow Vista Horse Arena on
+          Combie Road and is open to the public at no charge. The park was constructed by the
+          Meadow Vista Trails Association and dedicated to community volunteers Dave &amp; Judy Creek.
+        </p>
+      </div>
+    </section>
+
+    <!-- Two-column info -->
+    <div class="mt-12 grid gap-8 sm:grid-cols-2">
+
+      <!-- Access -->
+      <section class="rounded-xl border border-gray-200 bg-brand-50 p-7 dark:border-gray-700 dark:bg-brand-900/30">
+        <h2 class="text-xl font-bold text-gray-900 dark:text-white">Access &amp; Hours</h2>
+        <ul class="mt-4 space-y-2 text-sm text-gray-700 dark:text-gray-300">
+          <li class="flex items-start gap-2">
+            <span class="mt-0.5 text-accent-500">✓</span>
+            Open to the public — no MVTA membership required
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="mt-0.5 text-accent-500">✓</span>
+            Accessible through the Horse Arena entrance on Combie Road
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="mt-0.5 text-accent-500">✓</span>
+            Free to use
+          </li>
+        </ul>
+        <p class="mt-4 text-sm text-gray-600 dark:text-gray-400">
+          For directions or access information, contact <a href="mailto:admin@mvtrails.org">admin@mvtrails.org</a>.
+        </p>
+      </section>
+
+      <!-- Get involved -->
+      <section class="rounded-xl border border-gray-200 bg-accent-100 p-7 dark:border-gray-700 dark:bg-accent-600/10">
+        <h2 class="text-xl font-bold text-gray-900 dark:text-white">Get Involved</h2>
+        <p class="mt-3 text-sm text-gray-700 dark:text-gray-300">
+          MVTA volunteers keep the dog park clean, safe, and enjoyable for everyone.
+          There are always ways to pitch in.
+        </p>
+        <ul class="mt-4 space-y-2 text-sm text-gray-700 dark:text-gray-300">
+          <li class="flex items-start gap-2">
+            <span class="mt-0.5 text-accent-500">→</span>
+            Join a maintenance work party
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="mt-0.5 text-accent-500">→</span>
+            Suggest improvements or new equipment
+          </li>
+        </ul>
+        <p class="mt-4 text-sm text-gray-600 dark:text-gray-400">
+          <a href="/contact">Reach out to us</a> — we'd love your help.
+        </p>
+      </section>
+
+    </div>
+
+    <!-- CTA -->
+    <div class="mt-12 flex flex-wrap gap-4">
       <a href="/contact" class="btn-primary">Contact MVTA</a>
       <a href="/horse-arena" class="btn-secondary">Horse Arena →</a>
     </div>
+
   </main>
 </BaseLayout>

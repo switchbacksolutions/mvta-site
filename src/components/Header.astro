@@ -67,7 +67,7 @@ function isActive(href: string): boolean {
                     <path d="M6 8L1 3h10z" />
                   </svg>
                 </button>
-                <ul class="absolute left-0 top-full mt-1 hidden min-w-max rounded-md border border-gray-200 bg-white py-1 shadow-lg group-hover:block dark:border-gray-700 dark:bg-gray-900 list-none p-0">
+                <ul class="absolute left-0 top-full mt-1 hidden min-w-max rounded-md border border-gray-200 bg-white py-1 shadow-lg group-hover:block dark:border-gray-700 dark:bg-gray-900 list-none m-0 before:absolute before:content-[''] before:h-1 before:w-full before:-top-1 before:left-0">
                   {item.children.map(({ href, label }) => (
                     <li>
                       <a

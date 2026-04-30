@@ -6,58 +6,129 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
   title="Meadow Vista Horse Arena"
   description="A full-sized equestrian arena and staging area available to the public on Combie Road in Meadow Vista, CA. Managed by the Meadow Vista Trails Association."
 >
-  <main class="mx-auto max-w-3xl px-4 py-16 sm:px-6">
-    <h1 class="text-4xl font-bold text-gray-900 dark:text-white">Meadow Vista Horse Arena</h1>
-    <p class="mt-4 text-xl text-gray-600 dark:text-gray-400">
-      A full-sized equestrian arena and staging area available to the public.
-    </p>
-
-    <div class="prose-content mt-10">
-      <h2>About the Arena</h2>
-      <p>
-        The Meadow Vista Horse Arena is a full-size equestrian facility managed by MVTA on
-        Placer County-owned land. The property includes:
+  <!-- Hero -->
+  <div class="relative h-[28rem] sm:h-[36rem] w-full overflow-hidden">
+    <img
+      src="/images/horse-arena.jpeg"
+      alt="Meadow Vista Horse Arena"
+      class="absolute inset-0 h-full w-full object-cover object-center"
+    />
+    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
+    <div class="absolute bottom-0 left-0 right-0 px-6 pb-10 sm:px-12">
+      <span class="tag-pill mb-3 inline-block bg-accent-500 text-white dark:bg-accent-500 dark:text-white">Public Facility</span>
+      <h1 class="text-4xl font-bold text-white sm:text-5xl text-balance">
+        Meadow Vista Horse Arena
+      </h1>
+      <p class="mt-3 max-w-xl text-lg text-gray-200">
+        A full-sized equestrian facility on Combie Road, open to the public and managed by MVTA.
       </p>
-      <ul>
-        <li>A full-size equestrian arena</li>
-        <li>A smaller training arena</li>
-        <li>The adjacent <a href="/dog-park">Meadow Vista Dog Park</a> with coursing obstacles</li>
-        <li>Gated entry on Combie Road with perimeter fencing</li>
-        <li>Parking suitable for multiple horse trailers</li>
-      </ul>
+    </div>
+  </div>
 
-      <h2>Access</h2>
-      <p>
-        The arena is open to the public — MVTA membership is not required. Gate keys are
-        available from MVTA for a nominal fee. Contact us at{' '}
-        <a href="mailto:admin@mvtrails.org">admin@mvtrails.org</a> for access details.
-      </p>
+  <main class="mx-auto max-w-5xl px-4 py-14 sm:px-6">
 
-      <h2>Volunteer &amp; Support Opportunities</h2>
-      <p>
-        MVTA is actively seeking support to keep the arena operational:
-      </p>
-      <ul>
-        <li>Fundraising for a replacement shade structure</li>
-        <li>Maintenance volunteers to keep the arena clean and safe</li>
-      </ul>
-      <p>
-        If you'd like to help, <a href="/contact">get in touch</a> — every contribution makes
-        a difference.
-      </p>
+    <!-- Feature grid -->
+    <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      <div class="card flex flex-col gap-2">
+        <div class="text-3xl">🐴</div>
+        <h3 class="text-base font-semibold text-gray-900 dark:text-white">Full-Size Arena</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">Regulation-size equestrian arena suitable for all riding disciplines.</p>
+      </div>
+      <div class="card flex flex-col gap-2">
+        <div class="text-3xl">🔲</div>
+        <h3 class="text-base font-semibold text-gray-900 dark:text-white">Training Arena</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">A smaller secondary arena perfect for focused training and warm-up.</p>
+      </div>
+      <div class="card flex flex-col gap-2">
+        <div class="text-3xl">🚚</div>
+        <h3 class="text-base font-semibold text-gray-900 dark:text-white">Trailer Parking</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">Ample parking designed to accommodate multiple horse trailers.</p>
+      </div>
+      <div class="card flex flex-col gap-2">
+        <div class="text-3xl">🐕</div>
+        <h3 class="text-base font-semibold text-gray-900 dark:text-white">Adjacent Dog Park</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">Bring the whole family — the <a href="/dog-park">Meadow Vista Dog Park</a> is right next door.</p>
+      </div>
+    </div>
 
+    <!-- About section -->
+    <section class="mt-14">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-white">About the Arena</h2>
+      <div class="mt-1 h-1 w-16 rounded bg-accent-500"></div>
+      <div class="prose-content mt-6">
+        <p>
+          The Meadow Vista Horse Arena is a full-size equestrian facility managed by MVTA on
+          Placer County-owned land on Combie Road. The gated property is fenced around its
+          perimeter and features both a regulation arena and a smaller training arena, making it
+          suitable for everything from casual riding to structured lessons.
+        </p>
+      </div>
+    </section>
+
+    <!-- Two-column info -->
+    <div class="mt-12 grid gap-8 sm:grid-cols-2">
+
+      <!-- Access -->
+      <section class="rounded-xl border border-gray-200 bg-brand-50 p-7 dark:border-gray-700 dark:bg-brand-900/30">
+        <h2 class="text-xl font-bold text-gray-900 dark:text-white">Access &amp; Hours</h2>
+        <ul class="mt-4 space-y-2 text-sm text-gray-700 dark:text-gray-300">
+          <li class="flex items-start gap-2">
+            <span class="mt-0.5 text-accent-500">✓</span>
+            Open to the public — MVTA membership is not required
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="mt-0.5 text-accent-500">✓</span>
+            Gated entry on Combie Road with perimeter fencing
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="mt-0.5 text-accent-500">✓</span>
+            Gate keys available from MVTA for a nominal fee
+          </li>
+        </ul>
+        <p class="mt-4 text-sm text-gray-600 dark:text-gray-400">
+          Contact <a href="mailto:admin@mvtrails.org">admin@mvtrails.org</a> for key access details.
+        </p>
+      </section>
+
+      <!-- Support -->
+      <section class="rounded-xl border border-gray-200 bg-accent-100 p-7 dark:border-gray-700 dark:bg-accent-600/10">
+        <h2 class="text-xl font-bold text-gray-900 dark:text-white">Volunteer &amp; Support</h2>
+        <p class="mt-3 text-sm text-gray-700 dark:text-gray-300">
+          MVTA is actively seeking support to keep the arena operational and
+          improve the facility for everyone.
+        </p>
+        <ul class="mt-4 space-y-2 text-sm text-gray-700 dark:text-gray-300">
+          <li class="flex items-start gap-2">
+            <span class="mt-0.5 text-accent-500">→</span>
+            Fundraising for a replacement shade structure
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="mt-0.5 text-accent-500">→</span>
+            Maintenance volunteers to keep the arena clean and safe
+          </li>
+        </ul>
+        <p class="mt-4 text-sm text-gray-600 dark:text-gray-400">
+          Every contribution makes a difference.
+        </p>
+      </section>
+
+    </div>
+
+    <!-- Administration note -->
+    <section class="mt-10 prose-content">
       <h2>Administration</h2>
       <p>
         The arena operates on Placer County-owned land under MVTA management. For questions
-        about the facility, contact{' '}
-        <a href="mailto:admin@mvtrails.org">admin@mvtrails.org</a> or write to
-        P.O. Box 871, Meadow Vista, CA 95722.
+        about the facility, contact <a href="mailto:admin@mvtrails.org">admin@mvtrails.org</a>
+        or write to P.O. Box 871, Meadow Vista, CA 95722.
       </p>
-    </div>
+    </section>
 
-    <div class="mt-10 flex flex-wrap gap-4">
+    <!-- CTA -->
+    <div class="mt-12 flex flex-wrap gap-4">
       <a href="/contact" class="btn-primary">Contact MVTA</a>
       <a href="/dog-park" class="btn-secondary">Dog Park →</a>
     </div>
+
   </main>
 </BaseLayout>

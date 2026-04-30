@@ -1,74 +1,368 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+
+const inputClass = "mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white";
+const labelClass = "block text-sm font-medium text-gray-700 dark:text-gray-300";
+const sectionHeadingClass = "text-lg font-semibold text-gray-900 dark:text-white mt-8 mb-3 border-b border-gray-200 dark:border-gray-700 pb-2";
 ---
 
 <BaseLayout
   title="Join MVTA"
   description="Become a member of the Meadow Vista Trails Association. Individual memberships start at $25/year."
 >
-  <main class="mx-auto max-w-4xl px-4 py-16 sm:px-6">
+  <main class="mx-auto max-w-3xl px-4 py-16 sm:px-6">
     <h1 class="text-4xl font-bold text-gray-900 dark:text-white">Join MVTA</h1>
     <p class="mt-4 text-lg text-gray-600 dark:text-gray-400">
-      Your membership directly funds trail maintenance and community programs. Choose a membership level below.
+      Your membership directly funds trail maintenance and community programs.
+      MVTA is a 501(c)(3) non-profit — your donation may be tax deductible.
     </p>
 
-    <div class="mt-12 max-w-lg">
-      <form
-        name="membership"
-        method="POST"
-        data-netlify="true"
-        netlify-honeypot="bot-field"
-        class="space-y-5"
-      >
-        <p class="hidden">
-          <label>Don't fill this out: <input name="bot-field" /></label>
-        </p>
-        <input type="hidden" name="form-name" value="membership" />
-
-        <div>
-          <label for="member-name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Name</label>
-          <input
-            type="text"
-            id="member-name"
-            name="name"
-            required
-            autocomplete="name"
-            class="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
-            placeholder="Jane Smith"
-          />
-        </div>
-
-        <div>
-          <label for="member-email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
-          <input
-            type="email"
-            id="member-email"
-            name="email"
-            required
-            autocomplete="email"
-            class="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
-            placeholder="jane@example.com"
-          />
-        </div>
-
-        <div>
-          <label for="membership-level" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Membership Level</label>
-          <select
-            id="membership-level"
-            name="membership_level"
-            required
-            class="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
-          >
-            <option value="">Select a level…</option>
-            <option value="individual">Individual — $25/year</option>
-            <option value="family">Family — $35/year</option>
-            <option value="trail-guardian">Trail Guardian — $100/year</option>
-            <option value="lifetime-sponsor">Lifetime Sponsor — $1,000</option>
-          </select>
-        </div>
-
-        <button type="submit" class="btn-primary">Join MVTA</button>
-      </form>
+    <div class="mt-4 rounded-md bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
+      <strong>Privacy Policy:</strong> The information you provide will be used strictly in association
+      with your MVTA membership — for mailings, newsletters, and MVTA business. Your contact
+      information will <strong>not</strong> be sold or shared with any third party.
     </div>
+
+    <form
+      id="membership-form"
+      name="membership"
+      method="POST"
+      data-netlify="true"
+      netlify-honeypot="bot-field"
+      class="mt-8 space-y-6"
+    >
+      <p class="hidden">
+        <label>Don't fill this out: <input name="bot-field" /></label>
+      </p>
+      <input type="hidden" name="form-name" value="membership" />
+
+      <!-- Member Status & Level -->
+      <h2 class={sectionHeadingClass}>Membership</h2>
+
+      <div class="grid gap-6 sm:grid-cols-2">
+        <fieldset>
+          <legend class={labelClass}>Member Status <span class="text-red-600">*</span></legend>
+          <div class="mt-2 space-y-2">
+            <label class="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+              <input type="radio" name="status" value="New" required class="text-brand-600" /> New
+            </label>
+            <label class="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+              <input type="radio" name="status" value="Renewal" class="text-brand-600" /> Renewal
+            </label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend class={labelClass}>Membership Level <span class="text-red-600">*</span> <span class="font-normal">(includes all household members)</span></legend>
+          <div class="mt-2 space-y-2">
+            <label class="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+              <input type="radio" name="membership" value="Individual" required class="text-brand-600" /> Individual — $25/year
+            </label>
+            <label class="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+              <input type="radio" name="membership" value="Family" class="text-brand-600" /> Family — $35/year
+            </label>
+            <label class="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+              <input type="radio" name="membership" value="Trail Guardian" class="text-brand-600" /> Trail Guardian — $100/year
+            </label>
+            <label class="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+              <input type="radio" name="membership" value="Lifetime Sponsor" class="text-brand-600" /> Lifetime Sponsor — $1,000
+            </label>
+          </div>
+        </fieldset>
+      </div>
+
+      <!-- Primary Member Contact Info -->
+      <h2 class={sectionHeadingClass}>Primary Member Contact Info</h2>
+      <p class="text-sm text-gray-500 dark:text-gray-400 -mt-4">Fields marked <span class="text-red-600 font-semibold">*</span> are required.</p>
+
+      <div class="grid gap-4 sm:grid-cols-2">
+        <div>
+          <label for="firstname" class={labelClass}>First Name <span class="text-red-600">*</span></label>
+          <input type="text" id="firstname" name="firstname" required maxlength="30" autocomplete="given-name" class={inputClass} />
+        </div>
+        <div>
+          <label for="lastname" class={labelClass}>Last Name <span class="text-red-600">*</span></label>
+          <input type="text" id="lastname" name="lastname" required maxlength="30" autocomplete="family-name" class={inputClass} />
+        </div>
+      </div>
+
+      <div class="grid gap-4 sm:grid-cols-2 items-end">
+        <fieldset>
+          <legend class={labelClass}>Gender <span class="font-normal">(optional)</span></legend>
+          <div class="mt-2 flex gap-4">
+            <label class="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+              <input type="radio" name="gender" value="F" class="text-brand-600" /> Female
+            </label>
+            <label class="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+              <input type="radio" name="gender" value="M" class="text-brand-600" /> Male
+            </label>
+          </div>
+        </fieldset>
+        <div>
+          <label for="year1" class={labelClass}>Birth Year <span class="font-normal">(optional)</span></label>
+          <input type="text" id="year1" name="year1" maxlength="4" placeholder="e.g. 1975" class={inputClass} />
+        </div>
+      </div>
+
+      <div>
+        <label for="street" class={labelClass}>Street / PO Box <span class="text-red-600">*</span></label>
+        <input type="text" id="street" name="street" required maxlength="40" autocomplete="street-address" class={inputClass} />
+      </div>
+
+      <div class="grid gap-4 sm:grid-cols-3">
+        <div class="sm:col-span-1">
+          <label for="city" class={labelClass}>City <span class="text-red-600">*</span></label>
+          <input type="text" id="city" name="city" required maxlength="30" autocomplete="address-level2" class={inputClass} />
+        </div>
+        <div>
+          <label for="state" class={labelClass}>State <span class="text-red-600">*</span></label>
+          <input type="text" id="state" name="state" required maxlength="4" value="CA" autocomplete="address-level1" class={inputClass} />
+        </div>
+        <div>
+          <label for="zipcode" class={labelClass}>Zip <span class="text-red-600">*</span></label>
+          <input type="text" id="zipcode" name="zipcode" required maxlength="8" autocomplete="postal-code" class={inputClass} />
+        </div>
+      </div>
+
+      <div>
+        <label for="phone" class={labelClass}>Home Phone <span class="text-red-600">*</span></label>
+        <input type="tel" id="phone" name="phone" required maxlength="14" autocomplete="tel" placeholder="(530) 555-1234" class={inputClass} />
+      </div>
+
+      <div class="grid gap-4 sm:grid-cols-2">
+        <div>
+          <label for="email" class={labelClass}>Email <span class="text-red-600">*</span></label>
+          <input type="email" id="email" name="email" required maxlength="60" autocomplete="email" class={inputClass} />
+        </div>
+        <div>
+          <label for="email2" class={labelClass}>Re-enter Email <span class="text-red-600">*</span></label>
+          <input type="email" id="email2" name="email2" required maxlength="60" autocomplete="email" class={inputClass} />
+        </div>
+      </div>
+      <p id="email-mismatch" class="hidden text-sm text-red-600">Email addresses must match.</p>
+
+      <!-- About Your Membership -->
+      <h2 class={sectionHeadingClass}>About Your Membership</h2>
+
+      <fieldset>
+        <legend class={labelClass}>Trail Use <span class="font-normal">(check all that apply)</span></legend>
+        <div class="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
+          {[
+            ["use1", "Walking"],
+            ["use2", "Biking"],
+            ["use3", "Running"],
+            ["use4", "Walking Dogs"],
+            ["use5", "Riding Horses"],
+            ["use6", "Geocaching"],
+            ["use7", "Bird Watching"],
+          ].map(([name, label]) => (
+            <label class="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+              <input type="checkbox" name={name} value={label} class="text-brand-600" /> {label}
+            </label>
+          ))}
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend class={labelClass}>How You Can Help <span class="font-normal">(check all that apply)</span></legend>
+        <div class="mt-2 space-y-2">
+          <label class="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+            <input type="checkbox" name="more1" value="Trailwork" class="text-brand-600" />
+            Willing to help with trailwork (clearing, trimming, marking)
+          </label>
+          <label class="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+            <input type="checkbox" name="more2" value="Committee" class="text-brand-600" />
+            Willing to help with committee work (special events, etc.)
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend class={labelClass}>Monthly Newsletter</legend>
+        <div class="mt-2 space-y-2">
+          <label class="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+            <input type="radio" name="news" value="Sign me up" class="text-brand-600" /> Yes, please sign me up.
+          </label>
+          <label class="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+            <input type="radio" name="news" value="Already receiving" class="text-brand-600" /> Already signed up.
+          </label>
+          <label class="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+            <input type="radio" name="news" value="No thank you" class="text-brand-600" /> No, thank you.
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend class={labelClass}>Key to MV Arena Parking <span class="font-normal">(free to new members)</span></legend>
+        <div class="mt-2 space-y-2">
+          <label class="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+            <input type="radio" name="Key" value="Yes" class="text-brand-600" /> Yes, please mail me a key.
+          </label>
+          <label class="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+            <input type="radio" name="Key" value="Already have one" class="text-brand-600" /> Already have one.
+          </label>
+          <label class="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+            <input type="radio" name="Key" value="No thanks" class="text-brand-600" /> No, thank you.
+          </label>
+        </div>
+      </fieldset>
+
+      <div>
+        <label for="remarks" class={labelClass}>Remarks <span class="font-normal">(other trail uses, etc.)</span></label>
+        <textarea id="remarks" name="remarks" rows="3" class={inputClass}></textarea>
+      </div>
+
+      <div>
+        <label for="source" class={labelClass}>How did you first learn about MVTA?</label>
+        <textarea id="source" name="source" rows="3" class={inputClass}></textarea>
+      </div>
+
+      <!-- Payment Method -->
+      <h2 class={sectionHeadingClass}>Payment</h2>
+
+      <fieldset>
+        <legend class={`${labelClass} mb-2`}>How would you like to pay? <span class="text-red-600">*</span></legend>
+        <div class="space-y-3">
+          <label class="flex items-start gap-3 rounded-lg border border-gray-200 dark:border-gray-700 p-4 cursor-pointer hover:border-brand-400 dark:hover:border-brand-500 has-[:checked]:border-brand-500 has-[:checked]:bg-brand-50 dark:has-[:checked]:bg-brand-900/20 transition-colors">
+            <input id="pay-online" type="radio" name="payment_method" value="online" required class="mt-0.5 text-brand-600" />
+            <div>
+              <span class="block text-sm font-medium text-gray-900 dark:text-white">Pay online now</span>
+              <span class="block text-sm text-gray-500 dark:text-gray-400 mt-0.5">Secure credit/debit card payment via Stripe. You'll be redirected after submitting.</span>
+            </div>
+          </label>
+          <label class="flex items-start gap-3 rounded-lg border border-gray-200 dark:border-gray-700 p-4 cursor-pointer hover:border-brand-400 dark:hover:border-brand-500 has-[:checked]:border-brand-500 has-[:checked]:bg-brand-50 dark:has-[:checked]:bg-brand-900/20 transition-colors">
+            <input id="pay-check" type="radio" name="payment_method" value="check" class="mt-0.5 text-brand-600" />
+            <div>
+              <span class="block text-sm font-medium text-gray-900 dark:text-white">Pay by check / mail</span>
+              <span class="block text-sm text-gray-500 dark:text-gray-400 mt-0.5">Make check payable to MVTA. Payment instructions will follow by email.</span>
+            </div>
+          </label>
+        </div>
+      </fieldset>
+
+      <!-- Submit -->
+      <div class="pt-2" id="cancelled-msg" style="display:none">
+        <p class="mb-4 rounded-md bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 px-4 py-3 text-sm text-yellow-800 dark:text-yellow-300">
+          Payment was cancelled — your application was still saved. You can try again below.
+        </p>
+      </div>
+      <div class="pt-2">
+        <p id="submit-note" class="mb-4 text-sm text-gray-600 dark:text-gray-400">
+          Select a payment method above.
+        </p>
+        <div class="flex gap-4 items-center">
+          <button id="submit-btn" type="submit" class="btn-primary">Submit Application</button>
+          <button type="reset" class="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800">Reset</button>
+          <span id="submit-spinner" class="hidden text-sm text-gray-500 dark:text-gray-400">Please wait…</span>
+        </div>
+      </div>
+    </form>
+
+    <p class="mt-8 text-sm text-gray-500 dark:text-gray-400">
+      Prefer a paper form? Download the <a href="/membership.pdf" class="text-brand-600 dark:text-brand-400 underline">PDF membership application</a>.
+    </p>
   </main>
 </BaseLayout>
+
+<script>
+  // ── Email match validation ──────────────────────────────────────────────
+  const emailInput  = document.getElementById('email')  as HTMLInputElement;
+  const email2Input = document.getElementById('email2') as HTMLInputElement;
+  const mismatchMsg = document.getElementById('email-mismatch') as HTMLElement;
+
+  function checkEmailMatch() {
+    if (email2Input.value && emailInput.value !== email2Input.value) {
+      mismatchMsg.classList.remove('hidden');
+      email2Input.setCustomValidity('Email addresses must match.');
+    } else {
+      mismatchMsg.classList.add('hidden');
+      email2Input.setCustomValidity('');
+    }
+  }
+
+  emailInput.addEventListener('input', checkEmailMatch);
+  email2Input.addEventListener('input', checkEmailMatch);
+
+  // ── Payment method toggle ───────────────────────────────────────────────
+  const payOnlineRadio = document.getElementById('pay-online') as HTMLInputElement;
+  const payCheckRadio  = document.getElementById('pay-check')  as HTMLInputElement;
+  const submitBtn      = document.getElementById('submit-btn') as HTMLButtonElement;
+  const submitNote     = document.getElementById('submit-note') as HTMLElement;
+
+  function updateSubmitLabel() {
+    if (payOnlineRadio?.checked) {
+      submitBtn.textContent = 'Continue to Payment →';
+      submitNote.textContent = "You'll be taken to a secure Stripe checkout page to complete payment.";
+    } else if (payCheckRadio?.checked) {
+      submitBtn.textContent = 'Submit Application';
+      submitNote.textContent = 'After submitting you will receive payment instructions by email.';
+    } else {
+      submitNote.textContent = 'Select a payment method above.';
+    }
+  }
+
+  payOnlineRadio?.addEventListener('change', updateSubmitLabel);
+  payCheckRadio?.addEventListener('change', updateSubmitLabel);
+
+  // ── Show cancelled banner if returning from Stripe ──────────────────────
+  if (new URLSearchParams(window.location.search).get('cancelled') === 'true') {
+    const banner = document.getElementById('cancelled-msg') as HTMLElement;
+    if (banner) banner.style.display = '';
+    history.replaceState({}, '', '/join');
+  }
+
+  // ── Form submission ─────────────────────────────────────────────────────
+  const form    = document.getElementById('membership-form') as HTMLFormElement;
+  const spinner = document.getElementById('submit-spinner') as HTMLElement;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    const formData = new FormData(form);
+    const payOnline = formData.get('payment_method') === 'online';
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Submitting…';
+    spinner.classList.remove('hidden');
+
+    try {
+      // Submit to Netlify Forms via AJAX
+      await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(formData as any).toString(),
+      });
+
+      if (payOnline) {
+        submitBtn.textContent = 'Redirecting to payment…';
+
+        const res = await fetch('/.netlify/functions/create-checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            membership: formData.get('membership'),
+            email: formData.get('email'),
+            name: `${formData.get('firstname')} ${formData.get('lastname')}`.trim(),
+          }),
+        });
+
+        if (!res.ok) throw new Error(`Checkout error ${res.status}`);
+        const { url } = await res.json() as { url: string };
+        window.location.href = url;
+      } else {
+        window.location.href = '/join-thank-you';
+      }
+    } catch (err) {
+      console.error(err);
+      submitBtn.disabled = false;
+      spinner.classList.add('hidden');
+      updateSubmitLabel();
+      alert('Something went wrong. Please try again or contact us directly at info@meadowvistatrails.org.');
+    }
+  });
+</script>
