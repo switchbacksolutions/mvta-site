@@ -7,22 +7,30 @@
   --font-family-sans: 'Poppins', system-ui, sans-serif;
   --font-family-mono: 'JetBrains Mono', 'Fira Code', monospace;
 
-  /* MVTA forest green scale */
-  --color-brand-50:  #f5faf6;
-  --color-brand-100: #e0ede0;
-  --color-brand-200: #afdfaa;
-  --color-brand-300: #7db87a;
-  --color-brand-400: #52914f;
-  --color-brand-500: #384b38;
-  --color-brand-600: #2e3e2e;
-  --color-brand-700: #1e2e1e;
-  --color-brand-800: #003c38;
-  --color-brand-900: #001e1c;
+  /* MVTA forest green scale — matched to logo badge foliage */
+  --color-brand-50:  #f4f9f0;
+  --color-brand-100: #dcefd4;
+  --color-brand-200: #b0d49e;
+  --color-brand-300: #7db868;
+  --color-brand-400: #4a7c2f;
+  --color-brand-500: #3a6022;
+  --color-brand-600: #2c4818;
+  --color-brand-700: #1e3010;
+  --color-brand-800: #121e08;
+  --color-brand-900: #080f03;
 
-  /* MVTA amber accent */
-  --color-accent-500: #be842d;
-  --color-accent-600: #a5721f;
-  --color-accent-100: #f5e6cc;
+  /* MVTA navy — matched to logo wordmark text */
+  --color-navy-50:  #eef2f8;
+  --color-navy-100: #ccd8ec;
+  --color-navy-300: #7a9ac5;
+  --color-navy-500: #2d4872;
+  --color-navy-700: #1c2e4a;
+  --color-navy-900: #0d1824;
+
+  /* MVTA orange — matched to logo sunburst */
+  --color-accent-100: #fef0d6;
+  --color-accent-500: #f4a020;
+  --color-accent-600: #d8860a;
 }
 
 /* ─── CSS Custom Properties ─────────────────────────────────────────────────── */
