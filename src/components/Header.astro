@@ -1,11 +1,4 @@
 ---
-/**
- * Header.astro
- * ─────────────────────────────────────────────────────────────────────────────
- * Site-wide header with navigation links and a dark-mode toggle.
- * The active link is highlighted based on the current URL pathname.
- */
-
 const NAV_LINKS = [
   { href: '/trails', label: 'Trails' },
   {
@@ -47,7 +40,7 @@ function isActive(href: string): boolean {
     </a>
 
     <!-- Desktop navigation -->
-    <nav aria-label="Main navigation">
+    <nav aria-label="Main navigation" class="hidden sm:block">
       <ul class="flex items-center gap-6 list-none m-0 p-0 text-sm leading-5">
         {NAV_LINKS.map((item) => (
           <li class="relative group">
@@ -57,7 +50,7 @@ function isActive(href: string): boolean {
                   type="button"
                   class:list={[
                     'flex items-center gap-1 p-0 appearance-none text-sm font-medium transition-colors',
-                    item.children.some(c => isActive(c.href))
+                    item.children!.some(c => isActive(c.href))
                       ? 'text-brand-600 dark:text-brand-400'
                       : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white',
                   ]}
@@ -69,7 +62,7 @@ function isActive(href: string): boolean {
                   </svg>
                 </button>
                 <ul class="absolute left-0 top-full mt-1 hidden min-w-max rounded-md border border-gray-200 bg-white py-1 shadow-lg group-hover:block dark:border-gray-700 dark:bg-gray-900 list-none m-0 before:absolute before:content-[''] before:h-1 before:w-full before:-top-1 before:left-0">
-                  {item.children.map(({ href, label }) => (
+                  {item.children!.map(({ href, label }) => (
                     <li>
                       <a
                         href={href}
@@ -110,12 +103,84 @@ function isActive(href: string): boolean {
       </ul>
     </nav>
 
+    <!-- Hamburger button (mobile only) -->
+    <button
+      id="mobile-menu-toggle"
+      type="button"
+      class="sm:hidden flex items-center justify-center p-2 rounded-md text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+      aria-label="Open navigation menu"
+    >
+      <svg id="icon-open" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+      <svg id="icon-close" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  </div>
+
+  <!-- Mobile menu panel -->
+  <div
+    id="mobile-menu"
+    class="hidden sm:hidden border-t border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900"
+  >
+    <nav aria-label="Mobile navigation">
+      <ul class="flex flex-col list-none m-0 px-4 py-3 gap-1">
+        {NAV_LINKS.map((item) => (
+          'children' in item ? (
+            <>
+              <li class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                {item.label}
+              </li>
+              {item.children!.map(({ href, label }) => (
+                <li>
+                  <a
+                    href={href}
+                    class:list={[
+                      'block pl-8 pr-4 py-1.5 rounded-md text-sm no-underline transition-colors border-l-2 ml-4',
+                      isActive(href)
+                        ? 'text-brand-600 border-brand-500 dark:text-brand-400'
+                        : 'text-gray-500 border-gray-200 hover:text-gray-800 hover:border-gray-400 dark:text-gray-400 dark:border-gray-700 dark:hover:text-white dark:hover:border-gray-500',
+                    ]}
+                    aria-current={isActive(href) ? 'page' : undefined}
+                  >
+                    {label}
+                  </a>
+                </li>
+              ))}
+            </>
+          ) : 'cta' in item && item.cta ? (
+            <li class="pt-3 pb-1">
+              <a href={item.href} class="btn-primary no-underline block text-center">
+                {item.label}
+              </a>
+            </li>
+          ) : (
+            <li>
+              <a
+                href={item.href}
+                class:list={[
+                  'block px-4 py-2 rounded-md text-sm font-medium no-underline transition-colors',
+                  isActive(item.href)
+                    ? 'text-brand-600 bg-brand-50 dark:text-brand-400 dark:bg-brand-900/20'
+                    : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50 dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-800',
+                ]}
+                aria-current={isActive(item.href) ? 'page' : undefined}
+              >
+                {item.label}
+              </a>
+            </li>
+          )
+        ))}
+      </ul>
+    </nav>
   </div>
 </header>
 
 <script>
-  // Only apply dark mode if explicitly stored — browser prefers-color-scheme is intentionally ignored.
-  // To re-enable the toggle UI, restore the button markup and uncomment the toggle listener below.
+  // Dark mode init
   const stored = localStorage.getItem('theme');
   if (stored === 'dark') {
     document.documentElement.classList.add('dark');
@@ -123,9 +188,29 @@ function isActive(href: string): boolean {
     document.documentElement.classList.remove('dark');
   }
 
-  // const toggle = document.getElementById('theme-toggle');
-  // toggle?.addEventListener('click', () => {
-  //   const isDark = document.documentElement.classList.toggle('dark');
-  //   localStorage.setItem('theme', isDark ? 'dark' : 'light');
-  // });
+  // Mobile menu toggle
+  const toggle = document.getElementById('mobile-menu-toggle');
+  const menu = document.getElementById('mobile-menu');
+  const iconOpen = document.getElementById('icon-open');
+  const iconClose = document.getElementById('icon-close');
+
+  toggle?.addEventListener('click', () => {
+    const isOpen = menu?.classList.contains('hidden') === false;
+    menu?.classList.toggle('hidden', isOpen);
+    toggle.setAttribute('aria-expanded', String(!isOpen));
+    toggle.setAttribute('aria-label', isOpen ? 'Open navigation menu' : 'Close navigation menu');
+    iconOpen?.classList.toggle('hidden', !isOpen);
+    iconClose?.classList.toggle('hidden', isOpen);
+  });
+
+  // Close menu when any mobile nav link is clicked
+  menu?.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', () => {
+      menu.classList.add('hidden');
+      toggle?.setAttribute('aria-expanded', 'false');
+      toggle?.setAttribute('aria-label', 'Open navigation menu');
+      iconOpen?.classList.remove('hidden');
+      iconClose?.classList.add('hidden');
+    });
+  });
 </script>
