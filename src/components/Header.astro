@@ -24,7 +24,7 @@ const NAV_LINKS = [
       { href: '/contact', label: 'Contact Us' },
     ],
   },
-  { href: '/join', label: 'Join' },
+  { href: '/join', label: 'Join', cta: true },
 ];
 
 const pathname = new URL(Astro.request.url).pathname;
@@ -48,7 +48,7 @@ function isActive(href: string): boolean {
 
     <!-- Desktop navigation -->
     <nav aria-label="Main navigation">
-      <ul class="flex items-center gap-6 list-none m-0 p-0">
+      <ul class="flex items-center gap-6 list-none m-0 p-0 text-sm leading-5">
         {NAV_LINKS.map((item) => (
           <li class="relative group">
             {'children' in item ? (
@@ -56,7 +56,7 @@ function isActive(href: string): boolean {
                 <button
                   type="button"
                   class:list={[
-                    'flex items-center gap-1 text-sm font-medium transition-colors',
+                    'flex items-center gap-1 p-0 appearance-none text-sm font-medium transition-colors',
                     item.children.some(c => isActive(c.href))
                       ? 'text-brand-600 dark:text-brand-400'
                       : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white',
@@ -87,6 +87,10 @@ function isActive(href: string): boolean {
                   ))}
                 </ul>
               </>
+            ) : 'cta' in item && item.cta ? (
+              <a href={item.href} class="btn-primary no-underline">
+                {item.label}
+              </a>
             ) : (
               <a
                 href={item.href}
@@ -106,56 +110,22 @@ function isActive(href: string): boolean {
       </ul>
     </nav>
 
-    <!-- Dark mode toggle -->
-    <button
-      id="theme-toggle"
-      type="button"
-      aria-label="Toggle dark mode"
-      class="rounded-md p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white transition-colors"
-    >
-      <!-- Sun icon (shown in dark mode) -->
-      <svg
-        id="icon-sun"
-        class="hidden h-5 w-5 dark:block"
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke-width="1.5"
-        stroke="currentColor"
-        aria-hidden="true"
-      >
-        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
-      </svg>
-      <!-- Moon icon (shown in light mode) -->
-      <svg
-        id="icon-moon"
-        class="h-5 w-5 dark:hidden"
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke-width="1.5"
-        stroke="currentColor"
-        aria-hidden="true"
-      >
-        <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
-      </svg>
-    </button>
   </div>
 </header>
 
 <script>
-  // Persist and apply dark mode preference
-  const root = document.documentElement;
+  // Only apply dark mode if explicitly stored — browser prefers-color-scheme is intentionally ignored.
+  // To re-enable the toggle UI, restore the button markup and uncomment the toggle listener below.
   const stored = localStorage.getItem('theme');
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-  if (stored === 'dark' || (!stored && prefersDark)) {
-    root.classList.add('dark');
+  if (stored === 'dark') {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
   }
 
-  const toggle = document.getElementById('theme-toggle');
-  toggle?.addEventListener('click', () => {
-    const isDark = root.classList.toggle('dark');
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
-  });
+  // const toggle = document.getElementById('theme-toggle');
+  // toggle?.addEventListener('click', () => {
+  //   const isDark = document.documentElement.classList.toggle('dark');
+  //   localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  // });
 </script>
