@@ -41,6 +41,69 @@ collections_config:
         embed: true
         snippet: true
 
+  # Trail entries — maps to src/content/trails/
+  trails:
+    path: src/content/trails
+    url: /trails/[slug]/
+    output: true
+    name: Trails
+    singular_name: Trail
+    icon: terrain
+    description: Manage trail listings — routes, difficulty, access info, and photos.
+    sort:
+      key: title
+      order: asc
+    filter:
+      base: none
+      include:
+        - '*.md'
+        - '*.mdx'
+    schemas:
+      default:
+        path: .cloudcannon/schemas/trail.md
+    _editables:
+      content:
+        bold: true
+        italic: true
+        strike: true
+        underline: true
+        link: true
+        bulletedlist: true
+        numberedlist: true
+        image: true
+        table: true
+        code: true
+        embed: true
+        snippet: true
+
+  # Board members — maps to src/content/board/
+  board:
+    path: src/content/board
+    url: /board/
+    output: false
+    name: Board Members
+    singular_name: Board Member
+    icon: badge
+    description: Manage the board of directors roster shown on the Board page.
+    sort:
+      key: order
+      order: asc
+    filter:
+      base: none
+      include:
+        - '*.md'
+        - '*.mdx'
+    schemas:
+      default:
+        path: .cloudcannon/schemas/board-member.md
+    _editables:
+      content:
+        bold: true
+        italic: true
+        strike: true
+        underline: true
+        link: true
+
   # Static pages — maps to src/pages/
   pages:
     path: src/pages
@@ -107,6 +170,121 @@ _inputs:
     type: checkbox
     label: Draft
     comment: When checked, this post is excluded from the build and RSS feed.
+
+  trailType:
+    type: select
+    label: Trail Type
+    comment: The shape of the route.
+    options:
+      values:
+        - Loop
+        - Out and Back
+        - Point to Point
+
+  distance:
+    type: text
+    label: Distance
+    comment: e.g. "4.5 miles"
+
+  difficulty:
+    type: select
+    label: Difficulty
+    options:
+      values:
+        - Easy
+        - Moderate
+        - Challenging
+
+  area:
+    type: select
+    label: Area
+    comment: The general region this trail is located in.
+    options:
+      values:
+        - Meadow Vista/Applegate
+        - Weimar/Colfax
+        - Auburn Area
+        - Alta/Dutch Flat
+        - High Country
+
+  uses:
+    type: multiselect
+    label: Permitted Uses
+    comment: Activities allowed on this trail.
+    options:
+      values:
+        - Hiking
+        - Mountain Biking
+        - Horseback Riding
+        - Dogs on Leash
+        - Family Friendly
+        - Wheelchair Accessible (paved loop)
+
+  access:
+    type: textarea
+    label: Access / Directions
+    comment: Written directions for reaching the trailhead.
+    options:
+      rows: 4
+
+  directionsUrl:
+    type: text
+    label: Directions Link
+    comment: Optional link to Google Maps or similar for driving directions.
+
+  mapUrl:
+    type: text
+    label: Trail Map Link
+    comment: Optional link to a trail map (PDF, AllTrails, etc).
+
+  amenities:
+    type: array
+    label: Amenities
+    comment: Facilities available at the trailhead, e.g. Parking, Restrooms, Picnic Tables.
+    _inputs:
+      _array_item:
+        type: text
+
+  galleryImages:
+    type: array
+    label: Gallery Images
+    comment: Photos shown in the trail's photo gallery.
+    _inputs:
+      _array_item:
+        type: image
+        options:
+          width: 1200
+          height: 1200
+
+  notes:
+    type: textarea
+    label: Tips & Notes
+    comment: Safety notes, seasonal warnings, or other tips shown in a callout box.
+    options:
+      rows: 4
+
+  name:
+    type: text
+    label: Name
+    comment: The board member's full name.
+
+  role:
+    type: text
+    label: Role
+    comment: Board position, e.g. "President" or "Trail Boss".
+
+  image:
+    type: image
+    label: Photo
+    comment: Headshot shown on the Board page.
+    options:
+      width: 200
+      height: 200
+
+  order:
+    type: number
+    label: Sort Order
+    comment: Determines the position on the Board page — lower numbers appear first.
 
 # ─── _structures — define how array items are built in the editor ────────────
 _structures:
