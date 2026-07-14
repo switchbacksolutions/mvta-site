@@ -144,6 +144,8 @@ collections_config:
         - '*.astro'
         - '*.md'
         - '*.mdx'
+      exclude:
+        - '_*.astro'
     _enabled_editors:
       - content
       - data

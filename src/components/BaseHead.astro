@@ -50,14 +50,6 @@ const canonical = new URL(canonicalURL, Astro.site ?? Astro.url).href;
 <meta name="generator" content={Astro.generator} />
 <link rel="canonical" href={canonical} />
 
-<!-- RSS auto-discovery -->
-<link
-  rel="alternate"
-  type="application/rss+xml"
-  title={`${SITE_NAME} RSS Feed`}
-  href="/rss.xml"
-/>
-
 <!-- Open Graph -->
 <meta property="og:type" content="website" />
 <meta property="og:url" content={canonical} />

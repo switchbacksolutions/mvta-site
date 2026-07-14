@@ -27,8 +27,7 @@ test.describe('Home page', () => {
   test('has a visible main navigation', async ({ page }) => {
     const nav = page.getByRole('navigation', { name: 'Main navigation' });
     await expect(nav).toBeVisible();
-    await expect(nav.getByRole('link', { name: 'Blog' })).toBeVisible();
-    await expect(nav.getByRole('link', { name: 'About' })).toBeVisible();
+    await expect(nav.getByRole('link', { name: 'Trails' })).toBeVisible();
   });
 
   test('has a page title', async ({ page }) => {
@@ -46,16 +45,10 @@ test.describe('Home page', () => {
     await expect(page.locator('meta[property="og:description"]')).toHaveCount(1);
   });
 
-  test('has an RSS autodiscovery link', async ({ page }) => {
-    const rssLink = page.locator('link[type="application/rss+xml"]');
-    await expect(rssLink).toHaveCount(1);
-    await expect(rssLink).toHaveAttribute('href', '/rss.xml');
-  });
-
   test('shows a hero section with call-to-action links', async ({ page }) => {
     const hero = page.locator('section').first();
-    await expect(hero.getByRole('link', { name: /blog/i })).toBeVisible();
-    await expect(hero.getByRole('link', { name: /about/i })).toBeVisible();
+    await expect(hero.getByRole('link', { name: /join/i })).toBeVisible();
+    await expect(hero.getByRole('link', { name: /trails/i })).toBeVisible();
   });
 
   test('shows the features / what\'s included section', async ({ page }) => {

@@ -2,7 +2,7 @@
 /**
  * Footer.astro
  * ─────────────────────────────────────────────────────────────────────────────
- * Site-wide footer with copyright, navigation links, and an RSS link.
+ * Site-wide footer with copyright and navigation links.
  */
 
 const year = new Date().getFullYear();
@@ -10,11 +10,8 @@ const year = new Date().getFullYear();
 const FOOTER_LINKS = [
   { href: '/trails', label: 'Trails' },
   { href: '/events', label: 'Events' },
-  { href: '/faq', label: 'FAQ' },
-  { href: '/blog', label: 'Blog / News' },
   { href: '/board', label: 'Board' },
   { href: '/licensing', label: 'Licensing' },
-  { href: '/rss.xml', label: 'RSS', external: true },
 ];
 ---
 
@@ -37,18 +34,13 @@ const FOOTER_LINKS = [
       <!-- Footer navigation -->
       <nav aria-label="Footer navigation">
         <ul class="flex flex-wrap gap-x-6 gap-y-2 list-none m-0 p-0">
-          {FOOTER_LINKS.map(({ href, label, external }) => (
+          {FOOTER_LINKS.map(({ href, label }) => (
             <li>
               <a
                 href={href}
                 class="text-sm text-brand-200 no-underline hover:text-white transition-colors"
-                rel={external ? 'noopener noreferrer' : undefined}
-                target={external ? '_blank' : undefined}
               >
                 {label}
-                {external && (
-                  <span class="sr-only">(opens in new tab)</span>
-                )}
               </a>
             </li>
           ))}
