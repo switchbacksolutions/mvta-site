@@ -2,7 +2,7 @@
 # Docs: https://cloudcannon.com/documentation/
 
 # The base URL of your site — used for live previews
-base_url: https://example.com
+base_url: https://mvtrails.netlify.app
 
 # ─── Collections ────────────────────────────────────────────────────────────
 collections_config:
@@ -114,7 +114,7 @@ collections_config:
     icon: mail
     description: Upload newsletter PDFs to list on the Newsletters page.
     paths:
-      uploads: public/documents/newsletters
+      uploads: /documents/newsletters/
     sort:
       key: pubDate
       order: desc
