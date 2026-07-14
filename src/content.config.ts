@@ -58,4 +58,13 @@ const board = defineCollection({
   }),
 });
 
-export const collections = { blog, trails, board };
+const newsletters = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/newsletters' }),
+  schema: z.object({
+    title: z.string(),
+    pubDate: z.coerce.date(),
+    pdfFile: z.string(),
+  }),
+});
+
+export const collections = { blog, trails, board, newsletters };

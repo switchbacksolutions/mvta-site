@@ -104,6 +104,31 @@ collections_config:
         underline: true
         link: true
 
+  # Newsletters — maps to src/content/newsletters/
+  newsletters:
+    path: src/content/newsletters
+    url: /newsletters/
+    output: false
+    name: Newsletters
+    singular_name: Newsletter
+    icon: mail
+    description: Upload newsletter PDFs to list on the Newsletters page.
+    paths:
+      uploads: public/documents/newsletters
+    sort:
+      key: pubDate
+      order: desc
+    filter:
+      base: none
+      include:
+        - '*.md'
+        - '*.mdx'
+    schemas:
+      default:
+        path: .cloudcannon/schemas/newsletter.md
+    _enabled_editors:
+      - data
+
   # Static pages — maps to src/pages/
   pages:
     path: src/pages
@@ -285,6 +310,15 @@ _inputs:
     type: number
     label: Sort Order
     comment: Determines the position on the Board page — lower numbers appear first.
+
+  pdfFile:
+    type: document
+    label: Newsletter PDF
+    comment: Upload the newsletter issue as a PDF.
+    options:
+      accepts_mime_types:
+        - application/pdf
+      required: true
 
 # ─── _structures — define how array items are built in the editor ────────────
 _structures:
