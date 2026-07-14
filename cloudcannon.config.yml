@@ -129,6 +129,29 @@ collections_config:
     _enabled_editors:
       - data
 
+  # Events — maps to src/content/events/
+  events:
+    path: src/content/events
+    url: /events/
+    output: false
+    name: Events
+    singular_name: Event
+    icon: event
+    description: Manage upcoming group hikes, board meetings, and community events shown on the Events page.
+    sort:
+      key: date
+      order: asc
+    filter:
+      base: none
+      include:
+        - '*.md'
+        - '*.mdx'
+    schemas:
+      default:
+        path: .cloudcannon/schemas/event.md
+    _enabled_editors:
+      - data
+
   # Static pages — maps to src/pages/
   pages:
     path: src/pages
@@ -321,6 +344,19 @@ _inputs:
       accepts_mime_types:
         - application/pdf
       required: true
+
+  date:
+    type: datetime
+    label: Date
+    comment: The date this event takes place.
+    options:
+      timezone: UTC
+      format: YYYY-MM-DD
+
+  location:
+    type: text
+    label: Location
+    comment: Where the event is held. Leave blank if not location-specific.
 
 # ─── _structures — define how array items are built in the editor ────────────
 _structures:
