@@ -38,9 +38,12 @@ const events = (await getCollection('events')).sort(
       <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Stay in the Loop</h2>
       <p class="mt-2 text-gray-600 dark:text-gray-400">
         MVTA members receive our newsletter with upcoming events, trail news, and volunteer
-        opportunities. <a href="/contact" class="text-brand-600 dark:text-brand-400 hover:underline">Join MVTA</a> to
-        get updates delivered to your inbox.
+        opportunities.
       </p>
+      <div class="mt-4 flex flex-wrap gap-3">
+        <a href="/join" class="btn-primary">Join MVTA</a>
+        <a href="/newsletters" class="btn-secondary">Read Our Newsletter</a>
+      </div>
     </div>
   </main>
 </BaseLayout>
