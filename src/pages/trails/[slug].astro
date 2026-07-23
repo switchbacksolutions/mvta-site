@@ -1,7 +1,14 @@
 ---
+import { existsSync } from 'node:fs';
+import path from 'node:path';
+import sharp from 'sharp';
 import { getCollection, render } from 'astro:content';
 import { Image } from 'astro:assets';
 import BaseLayout from '@/layouts/BaseLayout.astro';
+
+// Below this width, a full-bleed banner (which can stretch to 100vw) would
+// visibly blur the source photo — fall back to a smaller framed treatment.
+const FULL_BLEED_MIN_WIDTH = 1600;
 
 export async function getStaticPaths() {
   const trails = await getCollection('trails');
@@ -14,6 +21,17 @@ export async function getStaticPaths() {
 const { trail } = Astro.props;
 const { Content } = await render(trail);
 const { title, description, heroImage, trailType, distance, difficulty, uses, access, directionsUrl, mapUrl, amenities, galleryImages, notes } = trail.data;
+
+let heroIsHighRes = false;
+if (heroImage) {
+  const filePath = path.join(process.cwd(), 'public', heroImage);
+  if (existsSync(filePath)) {
+    const metadata = await sharp(filePath).metadata();
+    heroIsHighRes = (metadata.width ?? 0) >= FULL_BLEED_MIN_WIDTH;
+  }
+}
+const showFullBleedHero = Boolean(heroImage) && heroIsHighRes;
+const showFramedHero = Boolean(heroImage) && !heroIsHighRes;
 
 const difficultyColor: Record<string, string> = {
   Easy: 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300',
@@ -33,8 +51,8 @@ const useIcons: Record<string, string> = {
 
 <BaseLayout title={title} description={description}>
   <main>
-    <!-- Hero image -->
-    {heroImage && (
+    <!-- Hero image (full-bleed, high-res photos only) -->
+    {showFullBleedHero && heroImage && (
       <div class="relative h-72 w-full overflow-hidden sm:h-96 lg:h-[28rem]">
         <Image
           src={heroImage}
@@ -63,8 +81,8 @@ const useIcons: Record<string, string> = {
     )}
 
     <div class="mx-auto max-w-4xl px-4 py-10 sm:px-6">
-      <!-- Back link (no hero fallback) -->
-      {!heroImage && (
+      <!-- Back link (framed hero or no hero) -->
+      {!showFullBleedHero && (
         <a
           href="/trails"
           class="mb-6 inline-flex items-center gap-1.5 text-sm font-medium no-underline text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors"
@@ -75,7 +93,21 @@ const useIcons: Record<string, string> = {
           All Trails
         </a>
       )}
-      {!heroImage && <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-6">{title}</h1>}
+      {!showFullBleedHero && <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-6">{title}</h1>}
+
+      <!-- Framed hero (lower-res photos — contained instead of full-bleed to avoid blur) -->
+      {showFramedHero && heroImage && (
+        <div class="mb-8 overflow-hidden rounded-2xl shadow-lg aspect-[16/9]">
+          <Image
+            src={heroImage}
+            alt={title}
+            width={1600}
+            height={900}
+            class="h-full w-full object-cover"
+            loading="eager"
+          />
+        </div>
+      )}
 
       <div class="grid gap-8 lg:grid-cols-3 lg:items-start">
         <!-- Left: description + gallery -->

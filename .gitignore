@@ -48,3 +48,9 @@ pnpm-debug.log*
 
 # TypeScript build info
 *.tsbuildinfo
+
+# Local Netlify folder
+.netlify
+
+# Deno lockfile (not used for this project's package manager)
+deno.lock
