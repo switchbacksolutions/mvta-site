@@ -6,6 +6,12 @@ import { defineConfig, devices } from '@playwright/test';
  * Run `npm run test:e2e:ui` for the interactive UI mode.
  *
  * The dev server is started automatically before tests run (webServer config below).
+ *
+ * We run through `netlify dev` (port 8888) rather than plain `astro dev`
+ * (port 4321) because tests/e2e/join.spec.ts exercises the Netlify Functions
+ * (/.netlify/functions/create-checkout, stripe-webhook) that only `netlify
+ * dev`'s proxy serves. netlify.toml's [dev] block pins targetPort=4321 so
+ * Astro's own server and the Netlify proxy don't collide.
  */
 export default defineConfig({
   testDir: './tests/e2e',
@@ -16,7 +22,7 @@ export default defineConfig({
   reporter: process.env.CI ? 'github' : 'html',
 
   use: {
-    baseURL: 'http://localhost:4321',
+    baseURL: 'http://localhost:8888',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
   },
@@ -45,8 +51,8 @@ export default defineConfig({
   ],
 
   webServer: {
-    command: 'npm run dev',
-    url: 'http://localhost:4321',
+    command: 'npx netlify dev',
+    url: 'http://localhost:8888',
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
   },

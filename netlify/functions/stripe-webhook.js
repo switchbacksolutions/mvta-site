@@ -15,17 +15,25 @@ export const handler = async (event) => {
 
   if (stripeEvent.type === 'checkout.session.completed') {
     const session = stripeEvent.data.object;
-    const { name, membership } = session.metadata ?? {};
+    const meta = session.metadata ?? {};
     const email = session.customer_details?.email ?? session.customer_email ?? 'unknown';
     const amount = ((session.amount_total ?? 0) / 100).toFixed(2);
 
-    await sendPaymentNotification({ name, membership, email, amount });
+    await sendPaymentNotification({ ...meta, email, amount });
   }
 
   return { statusCode: 200, body: 'OK' };
 };
 
-async function sendPaymentNotification({ name, membership, email, amount }) {
+// Field layout mirrors the treasurer email the old memberapp.php site sent
+// on every membership submission (see templates/memberappEmail.htm in the
+// old site repo) — same data, minus the household-members table, which
+// doesn't exist as a field group on the current /join form.
+async function sendPaymentNotification({
+  name, membership, email, amount,
+  status, gender, year1, street, city, state, zipcode, phone,
+  trailUses, canHelp, news, key, remarks, source,
+}) {
   const toEmail = process.env.TREASURER_EMAIL;
   const resendKey = process.env.RESEND_API_KEY;
 
@@ -34,14 +42,23 @@ async function sendPaymentNotification({ name, membership, email, amount }) {
     return;
   }
 
-  const subject = `MVTA Payment Received — ${name} (${membership})`;
+  const subject = `${status || 'New'} Membership Received — ${name} (${membership})`;
   const text = [
-    'An MVTA membership payment has been received online.',
+    `${status || 'New'} Membership received at the ${membership} level ($${amount}).`,
     '',
-    `Name:       ${name}`,
-    `Email:      ${email}`,
-    `Membership: ${membership}`,
-    `Amount:     $${amount}`,
+    'Primary Member:',
+    `  ${name}${gender ? `  ${gender}` : ''}${year1 ? `  ${year1}` : ''}`,
+    `  ${street}`,
+    `  ${city}, ${state}  ${zipcode}`,
+    `  ${phone}`,
+    `  ${email}`,
+    '',
+    `Trail Uses:    ${trailUses || '(none selected)'}`,
+    `Willing to help: ${canHelp || '(none selected)'}`,
+    `Newsletter:    ${news || '(not specified)'}`,
+    `Arena Key:     ${key || '(not specified)'}`,
+    `Remarks:       ${remarks || '(none)'}`,
+    `First learned: ${source || '(not specified)'}`,
     '',
     'Payment was processed via Stripe. Please update membership records accordingly.',
   ].join('\n');

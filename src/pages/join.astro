@@ -341,6 +341,17 @@ const sectionHeadingClass = "text-lg font-semibold text-gray-900 dark:text-white
       if (payOnline) {
         submitBtn.textContent = 'Redirecting to payment…';
 
+        // Pull the checkbox groups into pipe-joined strings the same way the
+        // old memberapp.php email template displayed them (| Walking | Biking | ...).
+        const trailUses = ['use1', 'use2', 'use3', 'use4', 'use5', 'use6', 'use7']
+          .map((n) => formData.get(n))
+          .filter(Boolean)
+          .join(' | ');
+        const canHelp = ['more1', 'more2']
+          .map((n) => formData.get(n))
+          .filter(Boolean)
+          .join(' | ');
+
         const res = await fetch('/.netlify/functions/create-checkout', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -348,6 +359,24 @@ const sectionHeadingClass = "text-lg font-semibold text-gray-900 dark:text-white
             membership: formData.get('membership'),
             email: formData.get('email'),
             name: `${formData.get('firstname')} ${formData.get('lastname')}`.trim(),
+            // Everything below mirrors the fields the old site's treasurer
+            // email included — carried through as Checkout Session metadata
+            // since Stripe's webhook payload is all stripe-webhook.js has to
+            // work with once the customer leaves this page.
+            status: formData.get('status') ?? '',
+            gender: formData.get('gender') ?? '',
+            year1: formData.get('year1') ?? '',
+            street: formData.get('street') ?? '',
+            city: formData.get('city') ?? '',
+            state: formData.get('state') ?? '',
+            zipcode: formData.get('zipcode') ?? '',
+            phone: formData.get('phone') ?? '',
+            trailUses,
+            canHelp,
+            news: formData.get('news') ?? '',
+            key: formData.get('Key') ?? '',
+            remarks: formData.get('remarks') ?? '',
+            source: formData.get('source') ?? '',
           }),
         });
 

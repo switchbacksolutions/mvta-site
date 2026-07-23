@@ -12,7 +12,8 @@
 # Development server settings (for Netlify Dev)
 [dev]
   command = "npm run dev"
-  port = 4321
+  targetPort = 4321
+  port = 8888
   publish = "dist"
 
 # Production headers applied to all pages
