@@ -62,7 +62,10 @@ const newsletters = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/newsletters' }),
   schema: z.object({
     title: z.string(),
-    pubDate: z.coerce.date(),
+    // CloudCannon can commit a draft entry (PDF uploaded, metadata not yet
+    // filled in) with a blank pubDate. Falling back to "now" instead of
+    // throwing keeps one incomplete draft from failing the entire site build.
+    pubDate: z.coerce.date().catch(() => new Date()),
     pdfFile: z.string(),
   }),
 });
