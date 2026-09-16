@@ -27,18 +27,25 @@ function isActive(href: string): boolean {
   if (href === '/') return pathname === '/';
   return pathname.startsWith(href);
 }
+
+// Only the home page lets the badge hang into the hero. Other pages start with headings it would cover.
+const isHome = pathname === '/';
 ---
 
-<header class="sticky top-0 z-50 border-b border-gray-200 bg-white/90 backdrop-blur dark:border-gray-700 dark:bg-gray-900/90">
-  <div class="mx-auto flex max-w-4xl items-center justify-between px-4 py-2 sm:px-6">
+<header
+  class="group/header sticky top-0 z-50 border-b border-gray-200 bg-white/90 backdrop-blur dark:border-gray-700 dark:bg-gray-900/90"
+  data-overhang={isHome ? '' : undefined}
+  data-tucked={isHome ? undefined : ''}
+>
+  <div class="mx-auto flex max-w-4xl items-center justify-between px-4 py-2 sm:h-20 sm:px-6 sm:py-0">
     <!-- Logo / site name -->
-    <a href="/" class="no-underline shrink-0">
+    <a href="/" class="no-underline shrink-0 sm:relative sm:h-full sm:w-16">
       <img
         src="/images/mvta-logo.png"
         alt="Meadow Vista Trails Association"
         width="235"
         height="240"
-        class="h-16 w-auto sm:h-20"
+        class="h-16 w-auto sm:absolute sm:top-2 sm:left-0 sm:h-32 sm:max-w-none sm:origin-top-left sm:drop-shadow-lg sm:transition-transform sm:duration-200 motion-reduce:transition-none sm:group-data-tucked/header:scale-50"
       />
     </a>
 
@@ -189,6 +196,14 @@ function isActive(href: string): boolean {
     document.documentElement.classList.add('dark');
   } else {
     document.documentElement.classList.remove('dark');
+  }
+
+  // Once scrolled, the overhanging badge would cover page content
+  const header = document.querySelector('header[data-overhang]');
+  if (header) {
+    const syncTucked = () => header.toggleAttribute('data-tucked', window.scrollY > 0);
+    syncTucked();
+    window.addEventListener('scroll', syncTucked, { passive: true });
   }
 
   // Mobile menu toggle
