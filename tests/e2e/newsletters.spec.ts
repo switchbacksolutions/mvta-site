@@ -19,10 +19,17 @@ test.describe('Newsletters page (/newsletters)', () => {
     await expect(page.getByRole('heading', { name: 'Newsletters', level: 1 })).toBeVisible();
   });
 
-  test('is reachable from the About Us nav dropdown', async ({ page }) => {
+  test('is reachable from the About Us nav menu', async ({ page, isMobile }) => {
     await page.goto('/');
-    await page.getByRole('button', { name: 'About Us' }).hover();
-    const link = page.getByRole('link', { name: 'Newsletters' });
+    // Mobile lists the About Us links in the hamburger menu, not a hover dropdown.
+    if (isMobile) {
+      await page.getByRole('button', { name: 'Open navigation menu' }).click();
+    } else {
+      await page.getByRole('button', { name: 'About Us' }).hover();
+    }
+    const link = page
+      .getByRole('navigation', { name: isMobile ? 'Mobile navigation' : 'Main navigation' })
+      .getByRole('link', { name: 'Newsletters' });
     await expect(link).toBeVisible();
     await expect(link).toHaveAttribute('href', '/newsletters');
   });

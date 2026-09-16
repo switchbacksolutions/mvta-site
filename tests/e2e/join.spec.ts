@@ -22,9 +22,6 @@
  *  - "Save my information" (Stripe Link) is explicitly unchecked before
  *    submitting, so this test doesn't create a Link account tied to a fake
  *    phone number on every run.
- *  - Stripe's optional "I am an AI agent acting on behalf of someone else"
- *    disclosure checkbox is checked when present — accurate for a CI run,
- *    and avoids the test hanging on it.
  *  - RESEND_API_KEY is intentionally NOT set in CI, so stripe-webhook.js's
  *    email step no-ops even if the webhook were reachable. This test also
  *    doesn't run `stripe listen`, so the webhook is never invoked at all —
@@ -72,20 +69,11 @@ async function fillJoinForm(page: Page, membership: string): Promise<string> {
 async function payOnStripeCheckout(page: Page): Promise<void> {
   await page.waitForURL(/checkout\.stripe\.com/, { timeout: 15_000 });
 
-  // Card number / expiry / CVC each live in their own Stripe-hosted PCI
-  // iframe — these titles are part of Stripe's documented Elements markup.
-  await page
-    .frameLocator('iframe[title="Secure card number input frame"]')
-    .getByPlaceholder('1234 1234 1234 1234')
-    .fill(TEST_CARD.number);
-  await page
-    .frameLocator('iframe[title="Secure expiration date input frame"]')
-    .getByPlaceholder('MM / YY')
-    .fill(TEST_CARD.expiry);
-  await page
-    .frameLocator('iframe[title="Secure CVC input frame"]')
-    .getByPlaceholder('CVC')
-    .fill(TEST_CARD.cvc);
+  // Hosted Checkout renders the card fields directly on the page, not in
+  // per-field Elements iframes.
+  await page.getByPlaceholder('1234 1234 1234 1234').fill(TEST_CARD.number);
+  await page.getByPlaceholder('MM / YY').fill(TEST_CARD.expiry);
+  await page.getByPlaceholder('CVC').fill(TEST_CARD.cvc);
 
   await page.getByLabel('Cardholder name').fill('E2E Test');
   await page.getByLabel('ZIP').fill('95722');
@@ -97,16 +85,7 @@ async function payOnStripeCheckout(page: Page): Promise<void> {
     await saveInfo.uncheck();
   }
 
-  // Stripe sometimes shows an "I am an AI agent acting on behalf of someone
-  // else" disclosure checkbox for automated-looking traffic — which a CI
-  // runner is. Answer it honestly if it's there; it's optional the rest of
-  // the time so this is a no-op when it doesn't appear.
-  const aiAgentDisclosure = page.getByLabel(/I am an AI agent acting on behalf of someone else/i);
-  if (await aiAgentDisclosure.isVisible({ timeout: 2_000 }).catch(() => false)) {
-    await aiAgentDisclosure.check();
-  }
-
-  await page.getByRole('button', { name: /^(Subscribe|Pay)\b/ }).click();
+  await page.getByRole('button', { name: /^(Subscribe|Pay)$/ }).click();
   await page.waitForURL(/\/join-success/, { timeout: 20_000 });
 }
 
