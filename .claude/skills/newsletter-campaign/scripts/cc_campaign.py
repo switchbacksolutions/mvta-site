@@ -17,6 +17,9 @@ AUTHZ = "https://authz.constantcontact.com/oauth2/default/v1"
 API = "https://api.cc.email/v3"
 SCOPES = "campaign_data contact_data account_read offline_access"
 CRED_PATH = os.path.expanduser("~/.config/mvta-newsletter/constantcontact.json")
+# Personal values stay out of this public repo. newsletter.sh reads the FTP keys from the same file.
+SETTINGS_PATH = os.path.expanduser("~/.config/mvta-newsletter/settings.env")
+SETTING_KEYS = ("FTP_HOST", "FTP_USER", "TEST_EMAIL")
 SKILL_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CONFIG_PATH = os.path.join(SKILL_DIR, "config.json")
 REPO_ROOT = os.path.abspath(os.path.join(SKILL_DIR, "..", "..", ".."))
@@ -41,6 +44,29 @@ def die(msg):
 def load_config():
     with open(CONFIG_PATH) as f:
         return json.load(f)
+
+
+def load_settings():
+    settings = {}
+    if os.path.exists(SETTINGS_PATH):
+        with open(SETTINGS_PATH) as f:
+            for line in f:
+                key, sep, value = line.rstrip("\n").partition("=")
+                if sep and value:
+                    settings[key] = value
+    return settings
+
+
+def require_settings(*keys):
+    """Settings dict, or exit with status=needs_settings so the skill can ask the user."""
+    settings = load_settings()
+    missing = [k for k in keys if not settings.get(k)]
+    if missing:
+        print("status=needs_settings")
+        print("missing=" + ",".join(missing))
+        print("settings_file=" + SETTINGS_PATH)
+        sys.exit(4)
+    return settings
 
 
 def load_creds():
@@ -428,6 +454,7 @@ def print_report(rep):
 
 def cmd_run(args):
     cfg = load_config()
+    cfg["test_email"] = require_settings("TEST_EMAIL")["TEST_EMAIL"]
     yyyymm = args.month or month_from_site()
     print("month=" + yyyymm)
     if not ensure_login(cfg, wait=args.wait):
@@ -458,6 +485,25 @@ def cmd_login(args):
         print("tokens=" + CRED_PATH)
         return 0
     return 2
+
+
+def cmd_set(args):
+    settings = load_settings()
+    for pair in args.pairs:
+        key, sep, value = pair.partition("=")
+        value = value.strip()
+        if key not in SETTING_KEYS:
+            raise Fail("unknown setting %r. Known: %s" % (key, ", ".join(SETTING_KEYS)))
+        if not sep or not value or "\n" in value:
+            raise Fail("%s needs a one-line value: %s=value" % (key, key))
+        settings[key] = value
+    os.makedirs(os.path.dirname(SETTINGS_PATH), exist_ok=True)
+    with open(SETTINGS_PATH, "w") as f:
+        f.writelines("%s=%s\n" % item for item in settings.items())
+    os.chmod(SETTINGS_PATH, stat.S_IRUSR | stat.S_IWUSR)
+    print("status=ok")
+    print("settings_file=" + SETTINGS_PATH)
+    return 0
 
 
 def cmd_info(_args):
@@ -498,6 +544,9 @@ def main():
     s.add_argument("--client-id")
     s.add_argument("--wait", type=int, default=20)
     s.set_defaults(fn=cmd_login)
+    s = sub.add_parser("set", help="save KEY=value pairs to the local settings file")
+    s.add_argument("pairs", nargs="+", metavar="KEY=value", help="keys: " + ", ".join(SETTING_KEYS))
+    s.set_defaults(fn=cmd_set)
     s = sub.add_parser("info", help="list account emails and contact lists")
     s.set_defaults(fn=cmd_info)
     s = sub.add_parser("render", help="print name, subject, preheader and HTML for a month")

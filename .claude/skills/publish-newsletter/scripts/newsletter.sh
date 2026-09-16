@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 # Publish a monthly MVTA newsletter PDF: local copy, newsletter.htm link, FTP upload, git commit.
-# Runs from the repo root. FTP password comes from MVTA_FTP_PASSWORD, then the login keychain, then ~/.netrc.
+# Runs from the repo root. FTP host and user come from SETTINGS_FILE so they stay out of this public repo.
 set -euo pipefail
 
-FTP_HOST="ftp.mvtrails.org"
-FTP_USER="alec@mvtrails.org"
+SETTINGS_FILE="$HOME/.config/mvta-newsletter/settings.env"
 SITE_URL="https://mvtrails.org"
 NEWSLETTER_DIR="newsletter"
 LINK_FILE="newsletter.htm"
@@ -16,6 +15,7 @@ usage:
                                             detect, publish when clear, then create the email campaign
   newsletter.sh detect  <pdf> [--offline]   print month facts as key=value lines
   newsletter.sh publish <pdf> <YYYYMM> [--force] [--no-commit]
+  newsletter.sh set     KEY=value...        save FTP_HOST, FTP_USER, or TEST_EMAIL to the settings file
 USAGE
   exit 2
 }
@@ -24,15 +24,39 @@ die() { echo "status=error"; echo "error=$*"; exit 1; }
 
 repo_root() { git rev-parse --show-toplevel 2>/dev/null || pwd; }
 
-# --- credentials -----------------------------------------------------------
+# --- settings and credentials ----------------------------------------------
+
+setting() {
+  [ -f "$SETTINGS_FILE" ] || return 0
+  sed -n "s/^$1=//p" "$SETTINGS_FILE" | tail -1
+}
+
+FTP_HOST=""
+FTP_USER=""
+# Exit with status=needs_settings so the skill can ask the user and save the answers.
+require_settings() {
+  local key missing=""
+  for key in "$@"; do
+    [ -n "$(setting "$key")" ] || missing="${missing:+$missing,}$key"
+  done
+  if [ -n "$missing" ]; then
+    echo "status=needs_settings"
+    echo "missing=$missing"
+    echo "settings_file=$SETTINGS_FILE"
+    exit 4
+  fi
+  FTP_HOST="$(setting FTP_HOST)"
+  FTP_USER="$(setting FTP_USER)"
+}
 
 FTP_PASSWORD=""
 load_password() {
   if [ -n "${MVTA_FTP_PASSWORD:-}" ]; then
     FTP_PASSWORD="$MVTA_FTP_PASSWORD"; return 0
   fi
+  # Match by account, not server, so the item still matches when FTP_HOST changes.
   # macOS may show a keychain dialog on first use. "Always Allow" stops future prompts.
-  FTP_PASSWORD="$(security find-internet-password -s "$FTP_HOST" -a "$FTP_USER" -w 2>/dev/null || true)"
+  FTP_PASSWORD="$(security find-internet-password -a "$FTP_USER" -r "ftp " -w 2>/dev/null || true)"
   [ -n "$FTP_PASSWORD" ] && return 0
   if [ -f "$HOME/.netrc" ] && grep -q "$FTP_HOST" "$HOME/.netrc"; then
     FTP_PASSWORD="__netrc__"; return 0
@@ -40,26 +64,28 @@ load_password() {
   return 1
 }
 
+# --ssl-reqd with certificate checks: the password must never cross the network in plain text.
 curl_ftp() {
-  # usage: curl_ftp <extra curl args...>
   if [ "$FTP_PASSWORD" = "__netrc__" ]; then
-    curl -sS --ssl -k --netrc "$@"
+    curl -sS --ssl-reqd --netrc "$@"
   else
-    curl -sS --ssl -k -u "$FTP_USER:$FTP_PASSWORD" "$@"
+    curl -sS --ssl-reqd -u "$FTP_USER:$FTP_PASSWORD" "$@"
   fi
 }
 
 # --- remote root -----------------------------------------------------------
 
 FTP_ROOT=""
+FTP_ERROR=""
 find_remote_root() {
   if [ -n "${MVTA_FTP_ROOT:-}" ]; then FTP_ROOT="$MVTA_FTP_ROOT"; return 0; fi
   local candidate
   for candidate in "" "public_html" "www" "htdocs"; do
-    if curl_ftp --list-only "ftp://$FTP_HOST/${candidate:+$candidate/}$NEWSLETTER_DIR/" >/dev/null 2>&1; then
+    if FTP_ERROR="$(curl_ftp --list-only "ftp://$FTP_HOST/${candidate:+$candidate/}$NEWSLETTER_DIR/" 2>&1 >/dev/null)"; then
       FTP_ROOT="$candidate"; return 0
     fi
   done
+  FTP_ERROR="${FTP_ERROR%%$'\n'*}"
   return 1
 }
 
@@ -122,6 +148,8 @@ cmd_detect() {
   latest_local="$(ls "$NEWSLETTER_DIR" 2>/dev/null | grep -oE '^[0-9]{6}\.pdf$' | sort | tail -1 | cut -c1-6)"
   current_link="$(grep -oE "$NEWSLETTER_DIR/[0-9]{6}\.pdf" "$LINK_FILE" | head -1 | grep -oE '[0-9]{6}')"
 
+  [ "$offline" = 1 ] || require_settings FTP_HOST FTP_USER
+
   latest_remote="unknown"
   if [ "$offline" = 0 ] && load_password && find_remote_root; then
     latest_remote="$(remote_list | sort | tail -1 | cut -c1-6)"
@@ -177,8 +205,9 @@ cmd_publish() {
   local target="$NEWSLETTER_DIR/$month.pdf"
   local url="$SITE_URL/$NEWSLETTER_DIR/$month.pdf"
 
-  load_password || die "no FTP password. Set MVTA_FTP_PASSWORD, add a keychain item for $FTP_USER@$FTP_HOST, or add a ~/.netrc entry."
-  find_remote_root || die "cannot find $NEWSLETTER_DIR/ on $FTP_HOST. Set MVTA_FTP_ROOT to the web root path."
+  require_settings FTP_HOST FTP_USER
+  load_password || die "no FTP password. Set MVTA_FTP_PASSWORD, add an FTP keychain item for $FTP_USER, or add a ~/.netrc entry for $FTP_HOST."
+  find_remote_root || die "cannot list $NEWSLETTER_DIR/ on $FTP_HOST: ${FTP_ERROR:-unknown error}. If the certificate does not match, set FTP_HOST to the name the certificate covers. If the web root is not /, public_html, www, or htdocs, set MVTA_FTP_ROOT."
 
   if [ "$force" = 0 ]; then
     [ -e "$target" ] && [ "$(realpath "$pdf")" != "$(realpath "$target")" ] && die "$target already exists locally. Re-run with --force to overwrite."
@@ -237,6 +266,12 @@ cmd_auto() {
     shift
   done
   [ -f "$pdf" ] || die "pdf not found: $pdf"
+  # Ask for every missing setting before any work starts.
+  if [ "$campaign" = 1 ]; then
+    require_settings FTP_HOST FTP_USER TEST_EMAIL
+  else
+    require_settings FTP_HOST FTP_USER
+  fi
 
   local facts
   facts="$(cmd_detect "$pdf")"
@@ -275,5 +310,6 @@ case "${1:-}" in
   auto) shift; cmd_auto "$@";;
   detect) shift; cmd_detect "$@";;
   publish) shift; cmd_publish "$@";;
+  set) shift; exec /usr/bin/python3 "$CAMPAIGN_PY" set "$@";;
   *) usage;;
 esac
