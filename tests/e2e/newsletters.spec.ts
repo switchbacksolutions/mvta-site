@@ -25,6 +25,10 @@ test.describe('Newsletters page (/newsletters)', () => {
     if (isMobile) {
       await page.getByRole('button', { name: 'Open navigation menu' }).click();
     } else {
+      // Tailwind v4 wraps group-hover in @media (hover: hover), which headless
+      // Firefox on Linux does not match, so the dropdown cannot open there.
+      const canHover = await page.evaluate(() => matchMedia('(hover: hover)').matches);
+      test.skip(!canHover, 'Browser does not match (hover: hover)');
       await page.getByRole('button', { name: 'About Us' }).hover();
     }
     const link = page

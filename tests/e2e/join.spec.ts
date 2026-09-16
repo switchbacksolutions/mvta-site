@@ -90,6 +90,11 @@ async function payOnStripeCheckout(page: Page): Promise<void> {
 }
 
 test.describe('Membership join + payment flow', () => {
+  test.skip(
+    ({ browserName }) => browserName === 'webkit' && process.platform === 'linux',
+    "Playwright's Linux WebKit rejects the api.stripe.com TLS certificate, so Checkout never loads",
+  );
+
   test('completes a subscription membership (Individual, $25/yr)', async ({ page }) => {
     await fillJoinForm(page, 'Individual');
     await page.locator('#submit-btn').click();
