@@ -19,10 +19,21 @@ test.describe('Newsletters page (/newsletters)', () => {
     await expect(page.getByRole('heading', { name: 'Newsletters', level: 1 })).toBeVisible();
   });
 
-  test('is reachable from the About Us nav dropdown', async ({ page }) => {
+  test('is reachable from the About Us nav menu', async ({ page, isMobile }) => {
     await page.goto('/');
-    await page.getByRole('button', { name: 'About Us' }).hover();
-    const link = page.getByRole('link', { name: 'Newsletters' });
+    // Mobile lists the About Us links in the hamburger menu, not a hover dropdown.
+    if (isMobile) {
+      await page.getByRole('button', { name: 'Open navigation menu' }).click();
+    } else {
+      // Tailwind v4 wraps group-hover in @media (hover: hover), which headless
+      // Firefox on Linux does not match, so the dropdown cannot open there.
+      const canHover = await page.evaluate(() => matchMedia('(hover: hover)').matches);
+      test.skip(!canHover, 'Browser does not match (hover: hover)');
+      await page.getByRole('button', { name: 'About Us' }).hover();
+    }
+    const link = page
+      .getByRole('navigation', { name: isMobile ? 'Mobile navigation' : 'Main navigation' })
+      .getByRole('link', { name: 'Newsletters' });
     await expect(link).toBeVisible();
     await expect(link).toHaveAttribute('href', '/newsletters');
   });
