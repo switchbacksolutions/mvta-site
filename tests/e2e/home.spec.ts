@@ -7,7 +7,14 @@
  * Run in UI mode: npm run test:e2e:ui
  */
 
-import { test, expect } from '@playwright/test';
+import { test, expect, type Locator, type Page } from '@playwright/test';
+
+// Below the sm breakpoint the desktop nav is hidden behind the menu button.
+async function openSiteNav(page: Page, isMobile: boolean): Promise<Locator> {
+  if (!isMobile) return page.getByRole('navigation', { name: 'Main navigation' });
+  await page.getByRole('button', { name: 'Open navigation menu' }).click();
+  return page.getByRole('navigation', { name: 'Mobile navigation' });
+}
 
 test.describe('Home page', () => {
   test.beforeEach(async ({ page }) => {
@@ -21,17 +28,19 @@ test.describe('Home page', () => {
 
   test('displays the site name in the header', async ({ page }) => {
     await expect(page.getByRole('banner')).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Astro Template' }).first()).toBeVisible();
+    await expect(
+      page.getByRole('banner').getByRole('link', { name: 'Meadow Vista Trails Association' }),
+    ).toBeVisible();
   });
 
-  test('has a visible main navigation', async ({ page }) => {
-    const nav = page.getByRole('navigation', { name: 'Main navigation' });
+  test('has a visible main navigation', async ({ page, isMobile }) => {
+    const nav = await openSiteNav(page, isMobile);
     await expect(nav).toBeVisible();
     await expect(nav.getByRole('link', { name: 'Trails' })).toBeVisible();
   });
 
   test('has a page title', async ({ page }) => {
-    await expect(page).toHaveTitle(/Astro Template/);
+    await expect(page).toHaveTitle(/Meadow Vista Trails Association/);
   });
 
   test('has a meta description', async ({ page }) => {
@@ -51,29 +60,15 @@ test.describe('Home page', () => {
     await expect(hero.getByRole('link', { name: /trails/i })).toBeVisible();
   });
 
-  test('shows the features / what\'s included section', async ({ page }) => {
-    await expect(page.getByText(/what's included/i)).toBeVisible();
-    await expect(page.getByRole('heading', { name: /Astro \+ TypeScript/i })).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Tailwind CSS', exact: true })).toBeVisible();
+  test('shows the featured trails and facilities sections', async ({ page }) => {
+    await expect(page.getByRole('heading', { name: 'Featured Trails', level: 2 })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Facilities', level: 2 })).toBeVisible();
   });
 
   test('has a footer with copyright text', async ({ page }) => {
     const footer = page.getByRole('contentinfo');
     await expect(footer).toBeVisible();
-    await expect(footer).toContainText('Astro Template');
-  });
-
-  test('dark mode toggle is present and functional', async ({ page }) => {
-    const toggle = page.getByRole('button', { name: /toggle dark mode/i });
-    await expect(toggle).toBeVisible();
-
-    // Toggle on
-    await toggle.click();
-    await expect(page.locator('html')).toHaveClass(/dark/);
-
-    // Toggle off
-    await toggle.click();
-    await expect(page.locator('html')).not.toHaveClass(/dark/);
+    await expect(footer).toContainText('Meadow Vista Trails Association. All rights reserved.');
   });
 
   test('is accessible — no obvious ARIA violations', async ({ page }) => {
@@ -83,13 +78,11 @@ test.describe('Home page', () => {
     await expect(page.getByRole('contentinfo')).toBeVisible(); // <footer>
   });
 
-  test('navigation links point to correct paths', async ({ page }) => {
-    const nav = page.getByRole('navigation', { name: 'Main navigation' });
+  test('navigation links point to correct paths', async ({ page, isMobile }) => {
+    const nav = await openSiteNav(page, isMobile);
 
-    const blogLink = nav.getByRole('link', { name: 'Blog' });
-    await expect(blogLink).toHaveAttribute('href', '/blog');
-
-    const aboutLink = nav.getByRole('link', { name: 'About' });
-    await expect(aboutLink).toHaveAttribute('href', '/about');
+    await expect(nav.getByRole('link', { name: 'Trails', exact: true })).toHaveAttribute('href', '/trails');
+    await expect(nav.getByRole('link', { name: 'Events', exact: true })).toHaveAttribute('href', '/events');
+    await expect(nav.getByRole('link', { name: 'Join', exact: true })).toHaveAttribute('href', '/join');
   });
 });
