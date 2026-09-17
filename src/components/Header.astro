@@ -28,37 +28,31 @@ function isActive(href: string): boolean {
   return pathname.startsWith(href);
 }
 
-// Only the home page lets the badge hang into the hero. Other pages start with headings it would cover.
-const isHome = pathname === '/';
-
-// The trails list is the one 6xl page. Match it so the badge stays on the content edge.
 const isTrailsList = pathname.replace(/\/$/, '') === '/trails';
 ---
 
 <header
-  class="group/header sticky top-0 z-50 border-b border-gray-200 bg-white/90 backdrop-blur dark:border-gray-700 dark:bg-gray-900/90"
-  data-overhang={isHome ? '' : undefined}
-  data-tucked={isHome ? undefined : ''}
+  class="sticky top-0 z-50 border-b border-gray-200 bg-white/90 backdrop-blur dark:border-gray-700 dark:bg-gray-900/90"
 >
   <div
     class:list={[
-      'mx-auto flex items-center justify-between px-4 py-2 sm:h-20 sm:px-6 sm:py-0',
+      'mx-auto flex h-20 items-center justify-between gap-6 px-4 sm:px-6',
       isTrailsList ? 'max-w-6xl' : 'max-w-5xl',
     ]}
   >
     <!-- Logo / site name -->
-    <a href="/" class="no-underline shrink-0 sm:relative sm:h-full sm:w-16">
+    <a href="/" class="block w-48 shrink-0 rounded-md no-underline dark:bg-white md:w-52">
       <img
-        src="/images/mvta-logo.png"
+        src="/images/mvta-logo-horizontal.png"
         alt="Meadow Vista Trails Association"
-        width="235"
-        height="240"
-        class="h-16 w-auto sm:absolute sm:top-2 sm:left-0 sm:h-32 sm:max-w-none sm:origin-top-left sm:drop-shadow-lg sm:transition-transform sm:duration-200 motion-reduce:transition-none sm:group-data-tucked/header:scale-50"
+        width="2042"
+        height="770"
+        class="block h-auto w-full"
       />
     </a>
 
     <!-- Desktop navigation -->
-    <nav aria-label="Main navigation" class="hidden sm:block">
+    <nav aria-label="Main navigation" class="hidden md:block">
       <ul class="flex items-center gap-6 list-none m-0 p-0 text-sm leading-5">
         {NAV_LINKS.map((item) => (
           <li class="relative group">
@@ -125,7 +119,7 @@ const isTrailsList = pathname.replace(/\/$/, '') === '/trails';
     <button
       id="mobile-menu-toggle"
       type="button"
-      class="sm:hidden flex items-center justify-center p-2 rounded-md text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+      class="md:hidden flex items-center justify-center p-2 rounded-md text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
       aria-expanded="false"
       aria-controls="mobile-menu"
       aria-label="Open navigation menu"
@@ -142,7 +136,7 @@ const isTrailsList = pathname.replace(/\/$/, '') === '/trails';
   <!-- Mobile menu panel -->
   <div
     id="mobile-menu"
-    class="hidden sm:hidden border-t border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900"
+    class="hidden md:hidden border-t border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900"
   >
     <nav aria-label="Mobile navigation">
       <ul class="flex flex-col list-none m-0 px-4 py-3 gap-1">
@@ -204,14 +198,6 @@ const isTrailsList = pathname.replace(/\/$/, '') === '/trails';
     document.documentElement.classList.add('dark');
   } else {
     document.documentElement.classList.remove('dark');
-  }
-
-  // Once scrolled, the overhanging badge would cover page content
-  const header = document.querySelector('header[data-overhang]');
-  if (header) {
-    const syncTucked = () => header.toggleAttribute('data-tucked', window.scrollY > 0);
-    syncTucked();
-    window.addEventListener('scroll', syncTucked, { passive: true });
   }
 
   // Mobile menu toggle
