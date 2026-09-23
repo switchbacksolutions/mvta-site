@@ -269,6 +269,11 @@ When adding a new page, add a corresponding E2E test file that covers:
 
 `cloudcannon.config.yml` defines how the CMS presents the content to editors.
 
+The file uses CloudCannon's Unified Configuration format. Collections use
+`glob`, `sort_options`, and `disable_url` (not `filter`, `sort`, or `output`).
+Array item inputs use a `key[*]` entry under `_inputs`. Build settings live in
+CloudCannon's Site Settings, not in this file.
+
 ### Collections
 - **blog** → `src/content/blog/` — all `.md` and `.mdx` files
 - **pages** → `src/pages/` — static pages
@@ -287,6 +292,8 @@ this template, place it at `.cloudcannon/schemas/blog-post.md`.
 
 ### Upload paths
 Images uploaded via the CMS are saved to `public/images/uploads/`.
+Newsletter PDFs are saved to `public/documents/newsletters/` (set on the
+`pdfFile` input).
 
 ---
 
