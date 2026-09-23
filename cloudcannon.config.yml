@@ -1,5 +1,7 @@
 # CloudCannon CMS Configuration
 # Docs: https://cloudcannon.com/documentation/
+# Uses the Unified Configuration format. The site's "Use Unified Configuration"
+# flag in CloudCannon must be on, or this file is read as legacy config.
 
 # The base URL of your site — used for live previews
 base_url: https://mvtrails.netlify.app
@@ -10,19 +12,16 @@ collections_config:
   blog:
     path: src/content/blog
     url: /blog/[slug]/
-    output: true
     name: Blog Posts
     singular_name: Blog Post
     icon: edit
     description: Write and manage blog posts in Markdown or MDX.
-    sort:
-      key: pubDate
-      order: desc
-    filter:
-      base: none
-      include:
-        - '*.md'
-        - '*.mdx'
+    sort_options:
+      - key: pubDate
+        order: desc
+    glob:
+      - '*.md'
+      - '*.mdx'
     schemas:
       default:
         path: .cloudcannon/schemas/blog-post.md
@@ -45,19 +44,16 @@ collections_config:
   trails:
     path: src/content/trails
     url: /trails/[slug]/
-    output: true
     name: Trails
     singular_name: Trail
-    icon: terrain
+    icon: hiking
     description: Manage trail listings — routes, difficulty, access info, and photos.
-    sort:
-      key: title
-      order: asc
-    filter:
-      base: none
-      include:
-        - '*.md'
-        - '*.mdx'
+    sort_options:
+      - key: title
+        order: asc
+    glob:
+      - '*.md'
+      - '*.mdx'
     schemas:
       default:
         path: .cloudcannon/schemas/trail.md
@@ -80,19 +76,17 @@ collections_config:
   board:
     path: src/content/board
     url: /board/
-    output: false
+    disable_url: true
     name: Board Members
     singular_name: Board Member
     icon: badge
     description: Manage the board of directors roster shown on the Board page.
-    sort:
-      key: order
-      order: asc
-    filter:
-      base: none
-      include:
-        - '*.md'
-        - '*.mdx'
+    sort_options:
+      - key: order
+        order: asc
+    glob:
+      - '*.md'
+      - '*.mdx'
     schemas:
       default:
         path: .cloudcannon/schemas/board-member.md
@@ -108,21 +102,17 @@ collections_config:
   newsletters:
     path: src/content/newsletters
     url: /newsletters/
-    output: false
+    disable_url: true
     name: Newsletters
     singular_name: Newsletter
     icon: mail
     description: Upload newsletter PDFs to list on the Newsletters page.
-    paths:
-      uploads: /documents/newsletters/
-    sort:
-      key: pubDate
-      order: desc
-    filter:
-      base: none
-      include:
-        - '*.md'
-        - '*.mdx'
+    sort_options:
+      - key: pubDate
+        order: desc
+    glob:
+      - '*.md'
+      - '*.mdx'
     schemas:
       default:
         path: .cloudcannon/schemas/newsletter.md
@@ -133,19 +123,17 @@ collections_config:
   events:
     path: src/content/events
     url: /events/
-    output: false
+    disable_url: true
     name: Events
     singular_name: Event
     icon: event
     description: Manage upcoming group hikes, board meetings, and community events shown on the Events page.
-    sort:
-      key: date
-      order: asc
-    filter:
-      base: none
-      include:
-        - '*.md'
-        - '*.mdx'
+    sort_options:
+      - key: date
+        order: asc
+    glob:
+      - '*.md'
+      - '*.mdx'
     schemas:
       default:
         path: .cloudcannon/schemas/event.md
@@ -156,19 +144,15 @@ collections_config:
   pages:
     path: src/pages
     url: /[slug]/
-    output: true
     name: Pages
     singular_name: Page
     icon: pages
     description: Manage static pages like About, Contact, etc.
-    filter:
-      base: none
-      include:
-        - '*.astro'
-        - '*.md'
-        - '*.mdx'
-      exclude:
-        - '_*.astro'
+    glob:
+      - '*.astro'
+      - '*.md'
+      - '*.mdx'
+      - '!_*.astro'
     _enabled_editors:
       - content
       - data
@@ -184,8 +168,6 @@ _inputs:
     type: textarea
     label: Description
     comment: Short summary used in SEO meta tags and post listings (150–160 characters recommended).
-    options:
-      rows: 3
 
   pubDate:
     type: datetime
@@ -193,7 +175,6 @@ _inputs:
     comment: The date this post was first published.
     options:
       timezone: UTC
-      format: YYYY-MM-DD
 
   updatedDate:
     type: datetime
@@ -201,7 +182,6 @@ _inputs:
     comment: Leave blank if the post has never been updated.
     options:
       timezone: UTC
-      format: YYYY-MM-DD
 
   heroImage:
     type: image
@@ -274,8 +254,6 @@ _inputs:
     type: textarea
     label: Access / Directions
     comment: Written directions for reaching the trailhead.
-    options:
-      rows: 4
 
   directionsUrl:
     type: text
@@ -291,27 +269,25 @@ _inputs:
     type: array
     label: Amenities
     comment: Facilities available at the trailhead, e.g. Parking, Restrooms, Picnic Tables.
-    _inputs:
-      _array_item:
-        type: text
+
+  amenities[*]:
+    type: text
 
   galleryImages:
     type: array
     label: Gallery Images
     comment: Photos shown in the trail's photo gallery.
-    _inputs:
-      _array_item:
-        type: image
-        options:
-          width: 1200
-          height: 1200
+
+  galleryImages[*]:
+    type: image
+    options:
+      width: 1200
+      height: 1200
 
   notes:
     type: textarea
     label: Tips & Notes
     comment: Safety notes, seasonal warnings, or other tips shown in a callout box.
-    options:
-      rows: 4
 
   name:
     type: text
@@ -344,6 +320,8 @@ _inputs:
       accepts_mime_types:
         - application/pdf
       required: true
+      paths:
+        uploads: public/documents/newsletters
 
   date:
     type: datetime
@@ -351,7 +329,6 @@ _inputs:
     comment: The date this event takes place.
     options:
       timezone: UTC
-      format: YYYY-MM-DD
 
   location:
     type: text
@@ -374,17 +351,10 @@ editor:
 source_editor:
   tab_size: 2
   show_gutter: true
-  theme: monokai
+  theme: sublime
 
 # ─── Upload paths ────────────────────────────────────────────────────────────
 paths:
   uploads: public/images/uploads
   static: public
   dam_uploads: public/images/uploads
-
-# ─── Build configuration ─────────────────────────────────────────────────────
-# CloudCannon runs your build command and serves the output.
-# These must match your netlify.toml / CI configuration.
-build:
-  install_command: npm install
-  output_path: dist
