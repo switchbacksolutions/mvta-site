@@ -5,6 +5,7 @@
  * Site-wide footer with copyright and navigation links.
  */
 
+import { HELP_EMAIL } from '@/lib/contact';
 import { MANAGE_MEMBERSHIP_URL } from '@/lib/membership';
 
 const year = new Date().getFullYear();
@@ -37,10 +38,10 @@ const FOOTER_LINKS = [
         <p class="mt-3 text-sm text-brand-200">Creating trails and community since 1995</p>
         <p class="mt-3 text-sm text-brand-200">P.O. Box 871, Meadow Vista, CA 95722</p>
         <a
-          href="mailto:admin@mvtrails.org"
+          href={`mailto:${HELP_EMAIL}`}
           class="text-sm text-brand-200 no-underline hover:text-white transition-colors"
         >
-          admin@mvtrails.org
+          {HELP_EMAIL}
         </a>
       </div>
 

@@ -1,4 +1,5 @@
 ---
+import { HELP_EMAIL } from '@/lib/contact';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 
 const stats = [
@@ -227,7 +228,7 @@ const memberships = [
         <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Get in touch</h2>
         <p class="mt-2 text-gray-600 dark:text-gray-400">
           P.O. Box 871, Meadow Vista, CA 95722 &mdash;
-          <a href="mailto:admin@mvtrails.org" class="text-brand-600 dark:text-brand-400 no-underline hover:underline">admin@mvtrails.org</a>
+          <a href={`mailto:${HELP_EMAIL}`} class="text-brand-600 dark:text-brand-400 no-underline hover:underline">{HELP_EMAIL}</a>
         </p>
       </div>
       <a href="/contact" class="btn-secondary shrink-0">Send a Message</a>

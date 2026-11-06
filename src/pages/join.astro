@@ -285,6 +285,8 @@ const sectionHeadingClass = "text-lg font-semibold text-gray-900 dark:text-white
 </BaseLayout>
 
 <script>
+  import { HELP_EMAIL } from '@/lib/contact';
+
   // ── Email match validation ──────────────────────────────────────────────
   const emailInput  = document.getElementById('email')  as HTMLInputElement;
   const email2Input = document.getElementById('email2') as HTMLInputElement;
@@ -418,7 +420,7 @@ const sectionHeadingClass = "text-lg font-semibold text-gray-900 dark:text-white
       submitBtn.disabled = false;
       spinner.classList.add('hidden');
       updateSubmitLabel();
-      alert('Something went wrong. Please try again or contact us directly at info@meadowvistatrails.org.');
+      alert(`Something went wrong. Please try again or contact us directly at ${HELP_EMAIL}.`);
     }
   });
 </script>
