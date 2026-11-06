@@ -1,4 +1,5 @@
 ---
+import { HELP_EMAIL } from '@/lib/contact';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 ---
 
@@ -74,7 +75,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
       <div>
         <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-6">Direct Contact</h2>
         <p class="text-sm text-gray-600 dark:text-gray-400">
-          Email: <a href="mailto:admin@mvtrails.org" class="text-brand-600 dark:text-brand-400">admin@mvtrails.org</a>
+          Email: <a href={`mailto:${HELP_EMAIL}`} class="text-brand-600 dark:text-brand-400">{HELP_EMAIL}</a>
         </p>
         <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
           Mail: P.O. Box 871, Meadow Vista, CA 95722

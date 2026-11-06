@@ -1,4 +1,5 @@
 ---
+import { HELP_EMAIL } from '@/lib/contact';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 ---
 
@@ -83,7 +84,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
           </li>
         </ul>
         <p class="mt-4 text-sm text-gray-600 dark:text-gray-400">
-          For directions or access information, contact <a href="mailto:admin@mvtrails.org">admin@mvtrails.org</a>.
+          For directions or access information, contact <a href={`mailto:${HELP_EMAIL}`}>{HELP_EMAIL}</a>.
         </p>
       </section>
 
