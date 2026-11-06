@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { MANAGE_MEMBERSHIP_URL } from '@/lib/membership';
 ---
 
 <BaseLayout
@@ -21,6 +22,12 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
     </p>
 
     <p class="mt-6 text-sm text-gray-500 dark:text-gray-400">
+      Annual memberships renew automatically each year.
+      <a href={MANAGE_MEMBERSHIP_URL} class="text-brand-600 dark:text-brand-400 underline">Manage your membership</a>
+      to check your renewal date, change your level or card, or cancel.
+    </p>
+
+    <p class="mt-4 text-sm text-gray-500 dark:text-gray-400">
       If you requested an arena parking key, it will be mailed to the address you provided.
       Questions? Email us at
       <a href="mailto:info@meadowvistatrails.org" class="text-brand-600 dark:text-brand-400 underline">info@meadowvistatrails.org</a>.

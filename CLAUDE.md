@@ -328,6 +328,22 @@ Append to `netlify.toml`:
 
 ---
 
+## Membership payments (Stripe)
+
+- `netlify/functions/create-checkout.js` starts Stripe Checkout from `/join`.
+  It refuses (HTTP 409) when the email already has a live subscription, and
+  reuses an existing customer record otherwise. Lookup helpers live in
+  `netlify/lib/membership.js`, outside `netlify/functions` so Netlify does not
+  deploy them as a function.
+- `netlify/functions/stripe-webhook.js` emails the treasurer on
+  `checkout.session.completed` and on automatic renewals (`invoice.paid` with
+  `billing_reason: subscription_cycle`). The Stripe webhook must send both events.
+- Members manage subscriptions in the Stripe customer portal. Its login page
+  URL is `PUBLIC_STRIPE_PORTAL_URL`, read at build time through
+  `src/lib/membership.ts`. Test and live mode have different URLs.
+
+---
+
 ## Do's and Don'ts
 
 ### Do

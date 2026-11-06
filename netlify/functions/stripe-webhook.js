@@ -22,6 +22,16 @@ export const handler = async (event) => {
     await sendPaymentNotification({ ...meta, email, amount });
   }
 
+  // subscription_create invoices are skipped: checkout.session.completed already covers them.
+  if (stripeEvent.type === 'invoice.paid' && stripeEvent.data.object.billing_reason === 'subscription_cycle') {
+    const invoice = stripeEvent.data.object;
+    const meta = invoice.parent?.subscription_details?.metadata ?? {};
+    const email = invoice.customer_email ?? 'unknown';
+    const amount = ((invoice.amount_paid ?? 0) / 100).toFixed(2);
+
+    await sendPaymentNotification({ ...meta, status: 'Automatic renewal', email, amount });
+  }
+
   return { statusCode: 200, body: 'OK' };
 };
 

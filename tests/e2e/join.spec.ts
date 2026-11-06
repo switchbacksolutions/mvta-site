@@ -32,6 +32,7 @@
  */
 
 import { test, expect, type Page } from '@playwright/test';
+import Stripe from 'stripe';
 
 const TEST_CARD = {
   number: '4242424242424242',
@@ -43,7 +44,15 @@ function uniqueTestEmail(): string {
   return `e2e+${Date.now()}-${Math.floor(Math.random() * 1e6)}@example.com`;
 }
 
-async function fillJoinForm(page: Page, membership: string): Promise<string> {
+const INDIVIDUAL_PRICE = 'price_1Tw7cQBSlwSEcqrGqcx5pbh6';
+
+function stripeClient(): Stripe {
+  const key = process.env.STRIPE_SECRET_KEY ?? '';
+  if (!key.startsWith('sk_test_')) throw new Error('STRIPE_SECRET_KEY must be a test-mode key');
+  return new Stripe(key);
+}
+
+async function fillJoinForm(page: Page, membership: string, email = uniqueTestEmail()): Promise<string> {
   await page.goto('/join');
 
   await page.locator('input[name="status"][value="New"]').check();
@@ -57,7 +66,6 @@ async function fillJoinForm(page: Page, membership: string): Promise<string> {
   await page.locator('#zipcode').fill('95722');
   await page.locator('#phone').fill('(530) 555-0100');
 
-  const email = uniqueTestEmail();
   await page.locator('#email').fill(email);
   await page.locator('#email2').fill(email);
 
@@ -111,5 +119,49 @@ test.describe('Membership join + payment flow', () => {
     await payOnStripeCheckout(page);
 
     await expect(page.getByRole('heading', { name: /Payment received/i })).toBeVisible();
+  });
+
+  test.describe('existing Stripe customers', () => {
+    let stripe: Stripe;
+    let customer: Stripe.Customer;
+
+    test.beforeEach(async () => {
+      stripe = stripeClient();
+      customer = await stripe.customers.create({ email: uniqueTestEmail(), name: 'E2E Existing' });
+    });
+
+    test.afterEach(async () => {
+      await stripe.customers.del(customer.id);
+    });
+
+    test('blocks a second subscription when one is active', async ({ page }) => {
+      const pm = await stripe.paymentMethods.attach('pm_card_visa', { customer: customer.id });
+      await stripe.subscriptions.create({
+        customer: customer.id,
+        items: [{ price: INDIVIDUAL_PRICE }],
+        default_payment_method: pm.id,
+      });
+
+      // Different case than the stored address, to cover the case-sensitive Stripe lookup.
+      await fillJoinForm(page, 'Family', customer.email!.toUpperCase());
+      await page.locator('#submit-btn').click();
+
+      const msg = page.getByRole('alert').filter({ hasText: 'already have a membership' });
+      await expect(msg).toBeVisible();
+      await expect(msg.getByRole('link', { name: 'Manage your membership' })).toHaveAttribute(
+        'href',
+        /^https:\/\/billing\.stripe\.com\/p\/login\//,
+      );
+      await expect(page).toHaveURL(/\/join$/);
+    });
+
+    test('reuses the customer record of a lapsed member', async ({ page }) => {
+      await fillJoinForm(page, 'Individual', customer.email!);
+      await page.locator('#submit-btn').click();
+      await payOnStripeCheckout(page);
+
+      const { data } = await stripe.customers.list({ email: customer.email!, limit: 10 });
+      expect(data.map((c) => c.id)).toEqual([customer.id]);
+    });
   });
 });
