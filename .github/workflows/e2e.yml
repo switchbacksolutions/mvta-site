@@ -35,6 +35,8 @@ jobs:
           # (sk_live_...) key in this secret.
           STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
           PUBLIC_SITE_URL: http://localhost:8888
+          # Test-mode portal login page; not a secret.
+          PUBLIC_STRIPE_PORTAL_URL: https://billing.stripe.com/p/login/test_00w9ASfJkgsAfNp0uZgMw00
           # STRIPE_WEBHOOK_SECRET / RESEND_API_KEY / TREASURER_EMAIL are
           # intentionally unset here — this suite doesn't run `stripe
           # listen`, so the webhook is never invoked and no email is ever

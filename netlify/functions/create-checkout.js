@@ -1,4 +1,5 @@
 import Stripe from 'stripe';
+import { findCustomers, hasLiveSubscription } from '../lib/membership.js';
 
 // Stripe Price IDs — annual tiers are recurring subscriptions;
 // Lifetime Sponsor is a one-time payment. Test-mode IDs shown here;
@@ -61,9 +62,19 @@ export const handler = async (event) => {
   };
 
   try {
+    const customers = await findCustomers(stripe, email);
+    if (hasLiveSubscription(customers)) {
+      return {
+        statusCode: 409,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ error: 'already_subscribed' }),
+      };
+    }
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
-      customer_email: email,
+      // Reuse a lapsed member's customer record instead of creating a duplicate.
+      ...(customers[0] ? { customer: customers[0].id } : { customer_email: email }),
       line_items: [
         {
           price: PRICE_IDS[membership],
