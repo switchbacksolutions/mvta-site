@@ -16,10 +16,12 @@ interface Props {
   title: string;
   /** Meta description and OG description */
   description: string;
-  /** Absolute URL to OG image (defaults to /og-default.png) */
+  /** Absolute URL to OG image (defaults to /og-default.jpg) */
   image?: string;
   /** Canonical URL — defaults to the current page URL */
   canonicalURL?: URL | string;
+  /** Adds robots noindex; pair with the sitemap filter in astro.config.mjs */
+  noindex?: boolean;
 }
 
 const SITE_NAME = 'Meadow Vista Trails Association';
@@ -27,8 +29,9 @@ const SITE_NAME = 'Meadow Vista Trails Association';
 const {
   title,
   description,
-  image = '/og-default.png',
+  image = '/og-default.jpg',
   canonicalURL = Astro.url,
+  noindex = false,
 } = Astro.props;
 
 const pageTitle = title === SITE_NAME ? title : `${title} | ${SITE_NAME}`;
@@ -41,7 +44,7 @@ const canonical = new URL(canonicalURL, Astro.site ?? Astro.url).href;
 
 <!-- Favicon -->
 <link rel="icon" href="/favicon.ico" sizes="32x32" />
-<link rel="icon" type="image/png" href="/images/mvta-favicon.png" sizes="any" />
+<link rel="icon" type="image/png" href="/images/mvta-favicon.png" sizes="192x192" />
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
 <!-- Primary meta -->
@@ -49,6 +52,7 @@ const canonical = new URL(canonicalURL, Astro.site ?? Astro.url).href;
 <meta name="description" content={description} />
 <meta name="generator" content={Astro.generator} />
 <link rel="canonical" href={canonical} />
+{noindex && <meta name="robots" content="noindex" />}
 
 <!-- Open Graph -->
 <meta property="og:type" content="website" />
@@ -68,5 +72,5 @@ const canonical = new URL(canonicalURL, Astro.site ?? Astro.url).href;
 <!-- Google Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Karla:wght@300;400;500;600&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 

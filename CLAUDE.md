@@ -1,4 +1,4 @@
-# CLAUDE.md — AI Agent Guide for astro-template
+# CLAUDE.md — AI Agent Guide for the MVTA website
 
 This file is the authoritative reference for AI agents (Claude, Copilot, etc.)
 working on this codebase. Read it before writing any code.
@@ -7,111 +7,74 @@ working on this codebase. Read it before writing any code.
 
 ## Project overview
 
-A production-ready Astro.js blog template. Key characteristics:
+The website of the Meadow Vista Trails Association (MVTA), a trails nonprofit
+in Meadow Vista, CA. It started from a generic Astro blog template; the blog
+parts were removed. Key characteristics:
 
-- **Static output** — no server runtime; every page is pre-rendered HTML
-- **Zero client JS by default** — only the dark-mode toggle script ships JS
-- **Content Collections** — type-safe Markdown/MDX blog posts validated by Zod
-- **Tailwind CSS** — utility-first styling; no custom CSS frameworks
-- **CloudCannon CMS** — editors manage content through a visual interface
-- **Netlify hosting** — `netlify.toml` drives build, headers, and redirects
+- **Static output** — every page is pre-rendered HTML. The only server code is
+  two Netlify Functions for Stripe membership payments.
+- **Little client JS** — small `<script>` blocks for the mobile menu, the join
+  form, and the trail filters.
+- **Content Collections** — trails, board, events, and newsletters as Markdown,
+  validated by Zod in `src/content.config.ts`.
+- **Tailwind CSS v4** — configured in `src/styles/global.css` (`@theme`); there
+  is no `tailwind.config.mjs`.
+- **CloudCannon CMS** — editors manage the collections through a visual interface.
+- **Netlify hosting** — `netlify.toml` drives build, headers, and functions.
+  `main` deploys to https://mvtrails.netlify.app. Launch steps are tracked in
+  GitHub issue #6.
 
 ---
 
 ## Directory structure
 
 ```
-astro-template/
-├── CLAUDE.md                  ← this file
-├── README.md
-├── astro.config.mjs           ← Astro integrations + site URL
-├── package.json
-├── tsconfig.json
-├── tailwind.config.mjs        ← theme extensions, content paths, dark mode
-├── vitest.config.ts           ← unit test config
-├── playwright.config.ts       ← E2E test config + webServer
-├── netlify.toml               ← build, headers, redirects
-├── cloudcannon.config.yml     ← CMS collections, inputs, structures
-├── .env.example               ← documented env vars (never commit .env)
-├── .gitignore
+├── astro.config.mjs           ← site URL, integrations, sitemap filter
+├── netlify.toml               ← build, functions, security headers (CSP)
+├── cloudcannon.config.yml     ← CMS collections and inputs
+├── .cloudcannon/schemas/      ← templates for new CMS entries
+├── netlify/
+│   ├── functions/             ← create-checkout.js, stripe-webhook.js
+│   └── lib/                   ← helpers for the functions (not deployed as functions)
 ├── public/
-│   └── favicon.svg            ← place static assets here (images, fonts, etc.)
+│   ├── images/                ← photos, logo, favicon; CMS uploads in images/uploads/
+│   ├── documents/newsletters/ ← newsletter PDFs
+│   ├── og-default.jpg         ← default social share image (1200×630)
+│   ├── robots.txt
+│   └── membership.pdf         ← paper membership form
 ├── src/
-│   ├── components/
-│   │   ├── BaseHead.astro     ← <head>: title, meta, OG, RSS autodiscovery
-│   │   ├── Header.astro       ← sticky nav + dark-mode toggle
-│   │   ├── Footer.astro       ← copyright + footer nav
-│   │   └── FormattedDate.astro← <time> element with ISO datetime attribute
-│   ├── content/
-│   │   ├── config.ts          ← Zod schema for the "blog" collection
-│   │   └── blog/              ← .md / .mdx blog posts
-│   ├── layouts/
-│   │   ├── BaseLayout.astro   ← HTML shell: BaseHead + Header + slot + Footer
-│   │   └── BlogPostLayout.astro← hero image, post header, prose, back-link
-│   ├── pages/
-│   │   ├── index.astro        ← home page: hero + recent posts + features
-│   │   ├── about.astro        ← about page
-│   │   ├── blog/
-│   │   │   ├── index.astro    ← blog listing (all published posts)
-│   │   │   └── [...slug].astro← individual post (getStaticPaths)
-│   │   └── rss.xml.ts         ← RSS feed endpoint
-│   └── styles/
-│       └── global.css         ← Tailwind layers + @layer components
+│   ├── components/            ← BaseHead, Header, Footer, FormattedDate
+│   ├── content/               ← trails/, board/, events/, newsletters/
+│   ├── content.config.ts      ← Zod schemas for the collections
+│   ├── layouts/BaseLayout.astro
+│   ├── lib/                   ← shared constants (e.g. membership portal URL)
+│   ├── pages/                 ← routes, including trails/[slug].astro and 404.astro
+│   └── styles/global.css      ← Tailwind import, @theme, @layer components
 ├── tests/
-│   ├── e2e/
-│   │   ├── home.spec.ts       ← Playwright: home page tests
-│   │   └── blog.spec.ts       ← Playwright: blog listing + post + RSS tests
-│   └── unit/
-│       └── example.test.ts    ← Vitest: utility function tests
-└── docs/
-    ├── TESTING.md
-    └── DEPLOYMENT.md
+│   ├── e2e/                   ← Playwright (runs against netlify dev)
+│   └── unit/                  ← Vitest
+└── docs/                      ← TESTING.md, DEPLOYMENT.md
 ```
 
 ---
 
-## How to add a new blog post
+## How to add content
 
-1. Create a new file in `src/content/blog/` — use kebab-case, e.g.
-   `my-new-post.md` or `my-new-post.mdx`.
+Add a Markdown file to the matching folder in `src/content/` (or use
+CloudCannon). The file name becomes the slug. Required fields are defined in
+`src/content.config.ts`; the CloudCannon templates in `.cloudcannon/schemas/`
+list them.
 
-2. Add the required frontmatter at the top:
+| Collection | Folder | Shown on |
+|------------|--------|----------|
+| trails | `src/content/trails/` | `/trails` and `/trails/<slug>` |
+| board | `src/content/board/` | `/board`, `/about` |
+| events | `src/content/events/` | `/events` |
+| newsletters | `src/content/newsletters/` | `/newsletters` |
 
-```markdown
----
-title: 'Your Post Title'
-description: 'One or two sentences for SEO meta and post cards (aim for 150–160 chars).'
-pubDate: '2024-06-01'          # ISO date string — required
-updatedDate: '2024-06-15'      # optional; omit if never updated
-heroImage: '/images/my-image.jpg'  # optional; place image in public/images/
-tags:
-  - astro
-  - tutorial
-draft: false                   # set true to exclude from build and RSS
----
-
-Post body in Markdown here.
-```
-
-3. Frontmatter schema (all fields validated by `src/content/config.ts`):
-
-| Field | Type | Required | Notes |
-|-------|------|----------|-------|
-| `title` | string | yes | Used in `<title>`, OG tags, and listings |
-| `description` | string | yes | 150–160 characters recommended |
-| `pubDate` | date string | yes | Coerced to `Date`; ISO 8601 format |
-| `updatedDate` | date string | no | Only shown if > `pubDate` |
-| `heroImage` | string (URL) | no | Relative path from `public/` or absolute URL |
-| `tags` | string[] | no | Defaults to `[]` |
-| `draft` | boolean | no | Defaults to `false` |
-
-4. The post is automatically included in:
-   - The blog listing at `/blog`
-   - The individual post page at `/blog/<slug>` (slug = filename without extension)
-   - The RSS feed at `/rss.xml`
-   - The sitemap at `/sitemap.xml`
-
-Draft posts (`draft: true`) are excluded from all of the above.
+Pages that should stay out of search results (like post-submit confirmations)
+take a `noindex` prop on `BaseLayout`, and must also be added to
+`NOINDEX_PATHS` in `astro.config.mjs` so the sitemap skips them.
 
 ---
 
@@ -199,7 +162,7 @@ Do NOT add `is:global` or `is:inline` unless you have a specific reason.
 
 ### Do's
 - Use Tailwind utility classes for all styling.
-- Use `dark:` variants for dark mode support.
+- Add `dark:` variants so pages work in OS dark mode.
 - Use the `@layer components` block in `global.css` for repeated patterns
   (e.g., `.btn-primary`, `.card`, `.tag-pill`).
 - Use `class:list={[...]}` in Astro for conditional classes.
@@ -212,15 +175,8 @@ Do NOT add `is:global` or `is:inline` unless you have a specific reason.
   sufficient.
 
 ### Dark mode
-Dark mode uses the `class` strategy. Toggle by adding/removing the `dark`
-class on `<html>`. The Header component handles this with a `<script>` block.
-
-```html
-<!-- Light -->
-<html class="">
-<!-- Dark -->
-<html class="dark">
-```
+`dark:` variants follow the visitor's OS setting (the Tailwind v4 default).
+There is no dark-mode toggle.
 
 ### Responsive design
 Use Tailwind's responsive prefixes:
@@ -275,25 +231,26 @@ Array item inputs use a `key[*]` entry under `_inputs`. Build settings live in
 CloudCannon's Site Settings, not in this file.
 
 ### Collections
-- **blog** → `src/content/blog/` — all `.md` and `.mdx` files
+- **trails**, **board**, **newsletters**, **events** → `src/content/<name>/`
 - **pages** → `src/pages/` — static pages
 
 ### Editing frontmatter
 The `_inputs` block in `cloudcannon.config.yml` maps every frontmatter field
-to a CMS input widget (text, textarea, datetime, image, array, checkbox).
+to a CMS input widget (text, textarea, datetime, image, array, document).
 When you add a new frontmatter field to the Zod schema in
-`src/content/config.ts`, also add a corresponding entry under `_inputs` in
+`src/content.config.ts`, also add a corresponding entry under `_inputs` in
 `cloudcannon.config.yml`.
 
 ### Schemas (CloudCannon)
-The `schemas` key under each collection points to a template file that
-CloudCannon pre-populates when an editor creates a new document. If you add
-this template, place it at `.cloudcannon/schemas/blog-post.md`.
+The `schemas` key under each collection points to a template file in
+`.cloudcannon/schemas/` that CloudCannon pre-populates when an editor creates
+a new entry.
 
 ### Upload paths
 Images uploaded via the CMS are saved to `public/images/uploads/`.
-Newsletter PDFs are saved to `public/documents/newsletters/` (set on the
-`pdfFile` input).
+Newsletter PDFs should be saved to `public/documents/newsletters/` (set on the
+`pdfFile` input). Before the Unified Configuration change, CloudCannon saved
+them to `public/images/uploads/`; confirm the next upload lands in the new folder.
 
 ---
 
@@ -302,7 +259,7 @@ Newsletter PDFs are saved to `public/documents/newsletters/` (set on the
 ### Build settings (from netlify.toml)
 - **Build command**: `npm run build`
 - **Publish directory**: `dist`
-- **Node version**: 20
+- **Node version**: 22
 
 ### Security headers
 All routes receive these headers (see `netlify.toml`):
@@ -351,7 +308,6 @@ Append to `netlify.toml`:
 - Co-locate `<style>` blocks with their component for truly component-specific
   styles that Tailwind cannot express.
 - Run `npm run check` before committing — catches type errors and Astro issues.
-- Keep `draft: true` on in-progress posts — they won't appear in builds.
 - Update `CLAUDE.md` when you change the project structure, conventions, or
   add new tooling.
 
@@ -363,7 +319,6 @@ Append to `netlify.toml`:
   `@/` for `src/` paths.
 - Don't modify `dist/` — it is generated on every build and ignored by git.
 - Don't add `console.log` statements to production code.
-- Don't set `draft: false` on a post that isn't ready to publish.
 - Don't change `astro.config.mjs` integrations without running a full build
   to verify nothing breaks.
 
@@ -384,7 +339,7 @@ On Netlify, set variables in **Site settings → Environment variables**.
 
 | Task | Command / File |
 |------|---------------|
-| Add blog post | Create `src/content/blog/my-post.md` |
+| Add trail, event, board member, newsletter | Add a file in `src/content/<collection>/` |
 | Add static page | Create `src/pages/my-page.astro` |
 | Add reusable component | Create `src/components/MyComponent.astro` |
 | Update site URL | Edit `site` in `astro.config.mjs` |
