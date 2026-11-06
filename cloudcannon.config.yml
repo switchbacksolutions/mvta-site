@@ -8,38 +8,6 @@ base_url: https://mvtrails.netlify.app
 
 # ─── Collections ────────────────────────────────────────────────────────────
 collections_config:
-  # Blog posts — maps to src/content/blog/
-  blog:
-    path: src/content/blog
-    url: /blog/[slug]/
-    name: Blog Posts
-    singular_name: Blog Post
-    icon: edit
-    description: Write and manage blog posts in Markdown or MDX.
-    sort_options:
-      - key: pubDate
-        order: desc
-    glob:
-      - '*.md'
-      - '*.mdx'
-    schemas:
-      default:
-        path: .cloudcannon/schemas/blog-post.md
-    _editables:
-      content:
-        bold: true
-        italic: true
-        strike: true
-        underline: true
-        link: true
-        bulletedlist: true
-        numberedlist: true
-        image: true
-        table: true
-        code: true
-        embed: true
-        snippet: true
-
   # Trail entries — maps to src/content/trails/
   trails:
     path: src/content/trails
@@ -162,44 +130,27 @@ _inputs:
   title:
     type: text
     label: Title
-    comment: The page or post title. Used in <title> and OG tags.
+    comment: The title. Used in <title> and OG tags.
 
   description:
     type: textarea
     label: Description
-    comment: Short summary used in SEO meta tags and post listings (150–160 characters recommended).
+    comment: Short summary used in SEO meta tags and listings (150–160 characters recommended).
 
   pubDate:
     type: datetime
     label: Published Date
-    comment: The date this post was first published.
-    options:
-      timezone: UTC
-
-  updatedDate:
-    type: datetime
-    label: Last Updated Date
-    comment: Leave blank if the post has never been updated.
+    comment: The newsletter issue date. Sets the order on the Newsletters page.
     options:
       timezone: UTC
 
   heroImage:
     type: image
     label: Hero Image
-    comment: Optional banner image displayed at the top of the post.
+    comment: Optional banner image displayed at the top of the trail page.
     options:
       width: 1200
       height: 630
-
-  tags:
-    type: array
-    label: Tags
-    comment: Categorisation tags for this post. Add one tag per item.
-
-  draft:
-    type: checkbox
-    label: Draft
-    comment: When checked, this post is excluded from the build and RSS feed.
 
   trailType:
     type: select
@@ -334,14 +285,6 @@ _inputs:
     type: text
     label: Location
     comment: Where the event is held. Leave blank if not location-specific.
-
-# ─── _structures — define how array items are built in the editor ────────────
-_structures:
-  tags:
-    values:
-      - value: ''
-        label: Tag
-        icon: label
 
 # ─── Editor configuration ────────────────────────────────────────────────────
 editor:

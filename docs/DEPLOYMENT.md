@@ -1,7 +1,7 @@
 # Deployment Guide
 
 This template is pre-configured for deployment on **Netlify**. It can also be
-deployed to any static hosting platform that supports Node 20+ builds.
+deployed to any static hosting platform that supports Node 22+ builds.
 
 ---
 
@@ -15,7 +15,7 @@ deployed to any static hosting platform that supports Node 20+ builds.
 4. Netlify will auto-detect the build settings from `netlify.toml`:
    - **Build command**: `npm run build`
    - **Publish directory**: `dist`
-   - **Node version**: 20
+   - **Node version**: 22
 5. Click **Deploy site**.
 
 ### Continuous deployment
@@ -115,7 +115,7 @@ Add a `.github/workflows/deploy.yml` workflow to build and push to the
 
 1. Connect your Git repository in the Cloudflare dashboard.
 2. Set the build command to `npm run build` and the output directory to `dist`.
-3. Set the Node.js version to `20` in the environment variables:
+3. Set the Node.js version to `22` in the environment variables:
    `NODE_VERSION=20`.
 
 ---
@@ -130,5 +130,5 @@ Add a `.github/workflows/deploy.yml` workflow to build and push to the
 - [ ] Run `npm run check` — no TypeScript errors
 - [ ] Run `npm test` — all unit tests pass
 - [ ] Run `npm run test:e2e` — all E2E tests pass against the dev server
-- [ ] Confirm `sitemap.xml` and `rss.xml` are generated in `dist/`
+- [ ] Confirm `sitemap-index.xml` and `robots.txt` are in `dist/`
 - [ ] Test the deploy preview before merging to `main`
