@@ -45,8 +45,8 @@ const isTrailsList = pathname.replace(/\/$/, '') === '/trails';
       <img
         src="/images/mvta-logo-horizontal.png"
         alt="Meadow Vista Trails Association"
-        width="2042"
-        height="770"
+        width="1024"
+        height="386"
         class="block h-auto w-full"
       />
     </a>
@@ -192,14 +192,6 @@ const isTrailsList = pathname.replace(/\/$/, '') === '/trails';
 </header>
 
 <script>
-  // Dark mode init
-  const stored = localStorage.getItem('theme');
-  if (stored === 'dark') {
-    document.documentElement.classList.add('dark');
-  } else {
-    document.documentElement.classList.remove('dark');
-  }
-
   // Mobile menu toggle
   const toggle = document.getElementById('mobile-menu-toggle');
   const menu = document.getElementById('mobile-menu');
