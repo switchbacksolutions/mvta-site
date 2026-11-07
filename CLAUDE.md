@@ -293,8 +293,11 @@ Append to `netlify.toml`:
   `netlify/lib/membership.js`, outside `netlify/functions` so Netlify does not
   deploy them as a function.
 - `netlify/functions/stripe-webhook.js` emails the treasurer on
-  `checkout.session.completed` and on automatic renewals (`invoice.paid` with
-  `billing_reason: subscription_cycle`). The Stripe webhook must send both events.
+  `checkout.session.completed`, on automatic renewals (`invoice.paid` with
+  `billing_reason: subscription_cycle`), and on cancellations
+  (`customer.subscription.updated` when a cancellation is scheduled or taken
+  back, `customer.subscription.deleted` when a membership ends). The Stripe
+  webhook must send all four events.
 - Members manage subscriptions in the Stripe customer portal. Its login page
   URL is `PUBLIC_STRIPE_PORTAL_URL`, read at build time through
   `src/lib/membership.ts`. Test and live mode have different URLs.

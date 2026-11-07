@@ -32,8 +32,64 @@ export const handler = async (event) => {
     await sendPaymentNotification({ ...meta, status: 'Automatic renewal', email, amount });
   }
 
+  // The portal cancels at period end, so a cancellation first arrives as an update, then as a delete.
+  if (stripeEvent.type === 'customer.subscription.updated') {
+    const sub = stripeEvent.data.object;
+    const before = isCancelScheduled({ ...sub, ...stripeEvent.data.previous_attributes });
+    const after = isCancelScheduled(sub);
+    if (before !== after) {
+      await sendCancellationNotification(stripe, sub, after ? 'scheduled' : 'withdrawn');
+    }
+  }
+
+  if (stripeEvent.type === 'customer.subscription.deleted') {
+    await sendCancellationNotification(stripe, stripeEvent.data.object, 'ended');
+  }
+
   return { statusCode: 200, body: 'OK' };
 };
+
+function isCancelScheduled(sub) {
+  return Boolean(sub.cancel_at_period_end || sub.cancel_at);
+}
+
+async function sendCancellationNotification(stripe, sub, kind) {
+  const { name = '(no name)', membership = '(unknown level)' } = sub.metadata ?? {};
+  let email = 'unknown';
+  try {
+    const customer = await stripe.customers.retrieve(sub.customer);
+    email = customer.email ?? email;
+  } catch (err) {
+    console.error('Could not look up the customer for a cancellation email:', err.message);
+  }
+
+  const endsAt = sub.cancel_at ?? sub.items?.data?.[0]?.current_period_end;
+  const endDate = endsAt ? new Date(endsAt * 1000).toISOString().slice(0, 10) : '(unknown date)';
+  const details = sub.cancellation_details ?? {};
+  const headline = {
+    scheduled: `${name} cancelled their ${membership} membership. It stays active until ${endDate} and will not renew.`,
+    withdrawn: `${name} took back the cancellation of their ${membership} membership. It will renew as normal.`,
+    ended: `${name}'s ${membership} membership has ended.`,
+  }[kind];
+  const subject = {
+    scheduled: 'Membership Cancelled',
+    withdrawn: 'Membership Cancellation Withdrawn',
+    ended: 'Membership Ended',
+  }[kind];
+
+  const text = [
+    headline,
+    '',
+    `Email:    ${email}`,
+    ...(details.reason ? [`Reason:   ${details.reason.replaceAll('_', ' ')}`] : []),
+    ...(details.feedback ? [`Feedback: ${details.feedback.replaceAll('_', ' ')}`] : []),
+    ...(details.comment ? [`Comment:  ${details.comment}`] : []),
+    '',
+    'Please update membership records accordingly.',
+  ].join('\n');
+
+  await sendTreasurerEmail(`${subject} — ${name} (${membership})`, text);
+}
 
 // Field layout mirrors the treasurer email the old memberapp.php site sent
 // on every membership submission (see templates/memberappEmail.htm in the
@@ -44,14 +100,6 @@ async function sendPaymentNotification({
   status, gender, year1, street, city, state, zipcode, phone,
   trailUses, canHelp, news, key, remarks, source,
 }) {
-  const toEmail = process.env.TREASURER_EMAIL;
-  const resendKey = process.env.RESEND_API_KEY;
-
-  if (!toEmail || !resendKey) {
-    console.warn('TREASURER_EMAIL or RESEND_API_KEY not set — skipping payment notification email');
-    return;
-  }
-
   const subject = `${status || 'New'} Membership Received — ${name} (${membership})`;
   const text = [
     `${status || 'New'} Membership received at the ${membership} level ($${amount}).`,
@@ -73,6 +121,18 @@ async function sendPaymentNotification({
     'Payment was processed via Stripe. Please update membership records accordingly.',
   ].join('\n');
 
+  await sendTreasurerEmail(subject, text);
+}
+
+async function sendTreasurerEmail(subject, text) {
+  const toEmail = process.env.TREASURER_EMAIL;
+  const resendKey = process.env.RESEND_API_KEY;
+
+  if (!toEmail || !resendKey) {
+    console.warn('TREASURER_EMAIL or RESEND_API_KEY not set — skipping treasurer email');
+    return;
+  }
+
   const from = process.env.FROM_EMAIL ?? 'MVTA Website <noreply@meadowvistatrails.org>';
 
   const res = await fetch('https://api.resend.com/emails', {
@@ -85,6 +145,6 @@ async function sendPaymentNotification({
   });
 
   if (!res.ok) {
-    console.error('Failed to send payment notification email:', await res.text());
+    console.error('Failed to send treasurer email:', await res.text());
   }
 }
